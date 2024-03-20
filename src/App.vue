@@ -2,6 +2,7 @@
   <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/Login">Login</router-link> |
+    <router-link to="/SignUp">SignUp</router-link> 
   </div>
   <router-view />
 </template>
@@ -19,6 +20,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: white;
 }
 
 #nav {

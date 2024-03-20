@@ -15,15 +15,15 @@ The verification code will only be required the first time the user logs in. Sub
       <h4> Password should contain: Min. 8 characters, min one uppercase letter, min one lowercase letter, min one special character</h4> <br>
       <div class="signup-form">
           <label for="name1">Name:</label>
-          <input type="text" id="name" v-model="credentials.name" required placeholder="Enter your name" /> <br>
+          <input type="text" id="name1" v-model="credentials.name" required placeholder="Enter your name" /> <br>
 
           <label for="email1">Email:</label>
-          <input type="email" id="email" v-model="credentials.email" required placeholder="Enter your email" /> <br>
+          <input type="email" id="email1" v-model="credentials.email" required placeholder="Enter your email" /> <br>
 
           <label for="password1">Password:</label>
           <input
             type="password"
-            id="password"
+            id="password1"
             v-model="credentials.password"
             required
             placeholder="Enter your password "
@@ -32,14 +32,14 @@ The verification code will only be required the first time the user logs in. Sub
           <label for="secondpassword1">Confirm Password:</label>
           <input
             type="password"
-            id="secondpassword"
+            id="secondpassword1"
             v-model="credentials.secondpassword"
             required
             placeholder="Confirm"
           /> <br>
 
-          <p v-if="credentials.password !== credentials.secondpassword" style="color: red;">Passwords do not match</p>
-          <p v-if="!passwordcheck(credentials.password)" style = "color:red;">Password does not meet requirements</p>
+          <p v-if="!emptyconfirm(credentials.secondpassword) && credentials.password !== credentials.secondpassword" style="color: red;">Passwords do not match</p>
+          <p v-if="!emptypassword(credentials.password) && !passwordcheck(credentials.password)" style = "color:red;">Password does not meet requirements</p>
 
 
         <div class ="signup">
@@ -73,13 +73,29 @@ export default {
     onsignup() {
       console.log(this.credentials);
     },
+    emptypassword(pw){
+      if (!pw.trim()) {
+        // Password is empty, return true
+        return true;
+      }
+      
+    },
+    emptyconfirm(pw){
+      if (!pw.trim()) {
+        // Confirm Password is empty, return true
+        return true;
+      }
+      
+    },
     passwordcheck(pw){
+       // Check if the password is not empty
+      
       const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
     
     // Test the password against the regular expression
       return regex.test(pw);
     },
-    async savetofs(){/*
+    savetofs(){
       console.log("saved")
       console.log("IN AC")
         let name = document.getElementById("name1").value;
@@ -89,7 +105,7 @@ export default {
         alert("Signing up...");
 
         try{
-            const docRef = await setDoc(doc(db,"Users", email),{
+            const docRef = setDoc(doc(db,"Users", email),{
                 Name: name, Email: email, Password: password,
             })
             console.log(docRef)
@@ -98,7 +114,7 @@ export default {
         }
         catch(error){
             console.error("Error adding document: ", error);
-        }*/
+        }
 
     },
     

@@ -12,30 +12,35 @@ The verification code will only be required the first time the user logs in. Sub
   <div class="signup-container">
     <form @submit.prevent="onsignup">
       <h2>Sign up for an account</h2>
+      <h4> Password should contain: Min. 8 characters, min one uppercase letter, min one lowercase letter, min one special character</h4> <br>
       <div class="signup-form">
-          <label for="name">Name:</label>
+          <label for="name1">Name:</label>
           <input type="text" id="name" v-model="credentials.name" required placeholder="Enter your name" /> <br>
 
-          <label for="email">Email:</label>
+          <label for="email1">Email:</label>
           <input type="email" id="email" v-model="credentials.email" required placeholder="Enter your email" /> <br>
 
-          <label for="password">Password:</label>
+          <label for="password1">Password:</label>
           <input
             type="password"
             id="password"
             v-model="credentials.password"
             required
-            placeholder="Enter your password"
+            placeholder="Enter your password "
           /> <br>
         
-          <label for="secondpassword">Confirm Password:</label>
+          <label for="secondpassword1">Confirm Password:</label>
           <input
             type="password"
             id="secondpassword"
             v-model="credentials.secondpassword"
             required
-            placeholder="Retype Password"
-          /> <br><br>
+            placeholder="Confirm"
+          /> <br>
+
+          <p v-if="credentials.password !== credentials.secondpassword" style="color: red;">Passwords do not match</p>
+          <p v-if="!passwordcheck(credentials.password)" style = "color:red;">Password does not meet requirements</p>
+
 
         <div class ="signup">
         <button id = "signupbutton" button type="submit" v-on:click="savetofs">Sign Up</button>
@@ -68,9 +73,35 @@ export default {
     onsignup() {
       console.log(this.credentials);
     },
-    async savetofs(){
+    passwordcheck(pw){
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    
+    // Test the password against the regular expression
+      return regex.test(pw);
+    },
+    async savetofs(){/*
       console.log("saved")
-    }
+      console.log("IN AC")
+        let name = document.getElementById("name1").value;
+        let email = document.getElementById("email1").value;
+        let password = document.getElementById("password1").value;
+       
+        alert("Signing up...");
+
+        try{
+            const docRef = await setDoc(doc(db,"Users", email),{
+                Name: name, Email: email, Password: password,
+            })
+            console.log(docRef)
+            document.getElementById('signup-form').reset();
+            //this.$emit("added")
+        }
+        catch(error){
+            console.error("Error adding document: ", error);
+        }*/
+
+    },
+    
   },
 };
 </script>
@@ -79,6 +110,7 @@ export default {
 .signup-form{  
   display: inline-block;
     text-align: right;
+    
 }
 
 form{

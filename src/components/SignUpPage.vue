@@ -10,7 +10,7 @@ The verification code will only be required the first time the user logs in. Sub
 
 <template>
   <div class="signup-container">
-    <form @submit.prevent="onsignup">
+    <form @submit.prevent="onsignup" id="form">
       <h2>Sign up for an account</h2>
       <h4> Password should contain: Min. 8 characters, min one uppercase letter, min one lowercase letter, min one special character</h4> <br>
       <div class="signup-form">
@@ -109,7 +109,7 @@ export default {
                 Name: name, Email: email, Password: password,
             })
             console.log(docRef)
-            document.getElementById('signup-form').reset();
+            document.getElementById('form').reset();
             //this.$emit("added")
         }
         catch(error){

@@ -25,6 +25,7 @@
             <p id="birthdate"></p>
         </div>
         <hr>
+        <button id="editbutton" type="button" @click="editProfile()">Edit</button>
     </div>
 </template>
 
@@ -60,6 +61,12 @@ export default {
             } else {
                 console.log("No user is signed in.");
             }
+        }
+    },
+
+    methods: {
+        editProfile() {
+            router.push("/edit")
         }
     }
 }

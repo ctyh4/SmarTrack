@@ -37,20 +37,29 @@ const db = getFirestore(firebaseApp);
 export default {
     mounted() {
         async function display() {
-            let data = await db.collection("Users").doc("Email").data() // "Email" has to be linkd to user idk
+            const user = auth.currentUser;
+            if (user) {
+                // Get the user's email address
+                const email = user.email;
 
-            let name = (data.Name)
-            let mobile = (data.Mobile)
-            let birthdate = (data.birthdate)
+                // Retrieve the user's data from the Firestore database
+                let data = await db.collection("Users").doc(email).get();
 
-            let nameCell = document.getElementById("nameCell")
-            let mobileCell = document.getElementById("mobileCell")
-            let birthdateCell = document.getElementById("birthdateCell")
+                // Extract the user's name, mobile number, and birthdate from the retrieved data
+                let name = data.data().Name;
+                let mobile = data.data().Mobile;
+                let birthdate = data.data().birthdate;
 
-            nameCell.innerHTML = name
-            mobileCell.innerHTML = mobile
-            birthdateCell.innerHTML = birthdate
-
+                // Update the HTML elements with the user's information
+                let nameCell = document.getElementById("nameCell");
+                let mobileCell = document.getElementById("mobileCell");
+                let birthdateCell = document.getElementById("birthdateCell");
+                nameCell.innerHTML = name;
+                mobileCell.innerHTML = mobile;
+                birthdateCell.innerHTML = birthdate;
+            } else {
+                console.log("No user is signed in.");
+            }
         }
     }
 }

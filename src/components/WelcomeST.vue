@@ -3,7 +3,24 @@
 </template>
 
 <script>
-export default {};
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import firebaseApp from '@/firebase.js';
+
+export default {
+  data() {
+    return {
+      user:false,
+    }
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth,(user)=> {
+      if (user){
+        this.user = user;
+      }
+    })
+  },
+};
 </script>
 
 <style scoped>

@@ -8,8 +8,10 @@ export default {};
 
 <style scoped>
 h1 {
-  background-color: rgb(120, 184, 99);
-  text-align: center;
-  width: 100%;
+color: #4D2B97;
+text-align: center;
+width: 100%;
+font-weight: bold;
+font-family: pjs;
 }
 </style>

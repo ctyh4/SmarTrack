@@ -1,72 +1,68 @@
 <template>
-  <div class="edit-container">
-    <h1>Edit Profile</h1>
-    <form @submit.prevent="submitForm">
-      <div class="form">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="name" required></input>
+  <div class="edit-profile-container" v-if="user">
+    <div>
+      <h1> Edit Profile </h1>
 
-        <label for="mobile">Mobile:</label>
-        <input type="tel" id="mobile" v-model="mobile" required></input>
-
-        <label for="birthdate">Birthdate:</label>
-        <input type="date" id="birthdate" v-model="birthdate" required></input>
+      <div id="nameCell">
+        <h3>Name:</h3>
+        <input id="name" v-model="user.displayName" type="text">
       </div>
-      <button id="savebutton" type="submit">Save</button>
-    </form>
+      <hr>
+
+      <div id="emailCell">
+        <h3>Email:</h3>
+        <input id="email" v-model="user.email" type="email">
+      </div>
+      <hr>
+
+      <button id="savebutton" type="button" @click="saveProfile()">Save</button>
+    </div>
+    <Logout/>
   </div>
 </template>
 
 <script>
-import firebaseApp from '../firebase.js';
-import { getAuth } from 'firebase/auth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useRouter } from 'vue-router';
-import { getFirestore } from "firebase/firestore"
-
-const db = getFirestore(firebaseApp);
+import firebaseApp from '@/firebase.js'
+import { getFirestore, doc, updateDoc } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+import Logout from '@/components/Logout.vue'
 
 export default {
+  name: 'EditProfile',
+  components: {
+    Logout
+  },
   data() {
     return {
-      name: "",
-      mobile: "",
-      birthdate: "",
-    };
-  },
-  created() {
-    const user = getAuth().currentUser;
-
-    if (user) {
-      const userDocRef = doc(db, 'Users', user.email);
-      const userDocSnap = getDoc(userDocRef);
-
-      userDocSnap.then((doc) => {
-        if (doc.exists()) {
-          const userData = doc.data();
-          this.name = userData.Name;
-          this.mobile = userData.Mobile;
-          this.birthdate = userData.Birthdate;
-        }
-      });
+      user: null
     }
   },
-  methods: {
-    async submitForm(e) {
-      e.preventDefault();
+  mounted() {
+    const auth = getAuth()
+    const db = getFirestore()
 
-      const user = getAuth().currentUser;
-
+    onAuthStateChanged(auth, user => {
       if (user) {
-        updateDoc(doc(db, 'Users', user.email), {
-          Name: this.name,
-          Mobile: this.mobile,
-          Birthdate: this.birthdate
-        }).then(() => {
-          this.$router.push('/profile');
-        });
+        this.user = user
       }
-    },
+    })
   },
-};
+  methods: {
+    async saveProfile() {
+      const userDoc = doc(getFirestore(), 'users', this.user.uid)
+      await updateDoc(userDoc, {
+        displayName: this.user.displayName,
+        email: this.user.email
+      })
+
+      this.$router.push('/profile')
+    }
+  }
+}
 </script>
+
+<style>
+.edit-profile-container {
+  text-align: center;
+}
+</style>

@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebaseApp from '@/firebase.js';
 
 export default {
+  name: "WelcomeST",
   data() {
     return {
       user:false,

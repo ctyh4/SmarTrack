@@ -4,7 +4,8 @@
 </template>
 <script>
 import WelcomeST from "@/components/WelcomeST.vue";
-import Logout from "@/components/Logout.vue"
+import Logout from "@/components/Logout.vue";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 
 export default {
   name: "App",
@@ -15,6 +16,14 @@ export default {
     return {
       refreshComp: 0,
     };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth,(user)=> {
+      if (user){
+        this.user = user;
+      }
+    })
   },
   methods: {
     change() {

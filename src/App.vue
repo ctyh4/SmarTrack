@@ -1,6 +1,5 @@
 <template>
-    <router-view/>
-    <p> need to figure out how to straightaway display login page without errors</p>
+    <router-view />
 </template>
 
 <script>

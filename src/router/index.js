@@ -1,25 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/views/HomePage.vue";
-import Login from "@/views/LoginPage.vue";
-import Logout from "@/views/LogoutPage.vue"
 import Profile from "@/views/ProfilePage.vue"
 import Edit from "@/views/EditPage.vue";
+import Login from "@/components/Login.vue";
+import NotFound from "@/views/NotFoundPage.vue";
+
 
 const routes = [
   {
-    path: "/home",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/login",
+    path: "/",
     name: "Login",
     component: Login,
   },
   {
-    path: "/logout",
-    name: "Logout",
-    component: Logout,
+    path: "/home",
+    name: "Home",
+    component: Home,
   },
   {
     path: "/profile",
@@ -30,6 +26,11 @@ const routes = [
     path: "/edit",
     name: "Edit",
     component: Edit,
+  },
+  {
+    path: "/:catchAll(.*)",
+    name: "NotFound",
+    component: NotFound,
   },
 ];
 

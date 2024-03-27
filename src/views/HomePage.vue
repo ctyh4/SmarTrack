@@ -1,12 +1,12 @@
 <template>
-  <WelcomeST />
+  <Home />
   <Logout />
 </template>
 <script>
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import { doc, setDoc } from "firebase/firestore";
-import WelcomeST from "@/components/WelcomeST.vue";
+import Home from "@/components/Home.vue";
 import Logout from "@/components/Logout.vue";
 import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 const db = getFirestore(firebaseApp);
@@ -14,7 +14,7 @@ const db = getFirestore(firebaseApp);
 export default {
   name: "App",
   components: {
-    WelcomeST, Logout
+    Home, Logout
   },
   data() {
     return {

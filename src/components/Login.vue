@@ -16,7 +16,6 @@ import "firebase/compat/auth";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 
-
 export default {
   name: "Login",
   mounted() {
@@ -44,8 +43,8 @@ export default {
 
 <style scoped>
 #firebaseui-auth-container {
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-top: 100px;
+  margin-bottom: 100px;  
 }
 
 #pagecontent {

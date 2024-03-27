@@ -1,16 +1,15 @@
 <template>
- <div style="text-align:center">
- <h1 id="mainHead">SmarTrack</h1>
- <div id="firebaseui-auth-container"></div>
- <div id="pagecontent">
-      SmarTrack is an app to track and give recommendations for your various payments based on your financial tools.
+  <div style="text-align: center">
+    <img id="bg" src="@/assets/SmarTrack.png" alt="" class="center"> 
+    <div id="pagecontent">
+      Make the best of your financial tools
       <br />
-
       Sign in to get started!
-    </div>
- </div>
+    </div> 
+    <div id="firebaseui-auth-container"></div>
+  </div>
 </template>
-
+ 
 <script>
 import firebase from "@/uifire.js";
 import "firebase/compat/auth";
@@ -19,51 +18,46 @@ import "firebaseui/dist/firebaseui.css";
 
 
 export default {
-  name:"Login",
+  name: "Login",
   mounted() {
     var ui = firebaseui.auth.AuthUI.getInstance();
-    if(!ui){
+    if (!ui) {
       ui = new firebaseui.auth.AuthUI(firebase.auth());
-  }
+    }
 
-  var uiConfig = {
+    var uiConfig = {
       signInSuccessUrl: "/home",
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         {
           provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-          requireDisplayName: false,
+          requireDisplayName: true,
         },
       ],
       // Other config options...
     };
 
     ui.start("#firebaseui-auth-container", uiConfig);
-  },
+  }
 };
 </script>
 
 <style scoped>
-#firebaseui-auth-container{
+#firebaseui-auth-container {
   margin-top: 50px;
   margin-bottom: 50px;
 }
+
 #pagecontent {
-  height: 100px;
   font-size: larger;
   font-weight: bolder;
-  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
-#mainHead {
-  text-align: center;
-  /* font-size: 50px; */
-  /* height: 100px; */
-  text-shadow: 2px 2px grey;
-}
+
 #bg {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 60%;
+  width: 20%;
 }
 </style>

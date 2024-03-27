@@ -3,9 +3,13 @@
   <Logout />
 </template>
 <script>
+import firebaseApp from "../firebase.js";
+import { getFirestore } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import WelcomeST from "@/components/WelcomeST.vue";
 import Logout from "@/components/Logout.vue";
 import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+const db = getFirestore(firebaseApp);
 
 export default {
   name: "App",
@@ -22,6 +26,7 @@ export default {
     onAuthStateChanged(auth,(user)=> {
       if (user){
         this.user = user;
+        this.storeFS(user);
       }
     })
   },
@@ -29,7 +34,20 @@ export default {
     change() {
       this.refreshComp += 1;
     },
-  },
+    storeFS(user) {
+      setDoc(doc(db, "Users", String(user.email)), {
+        Name: user.displayName,
+        Email: user.email,
+        UID: user.uid
+      })
+      .then(() => {
+        console.log("User data stored in Firestore successfully");
+      })
+      .catch(error => {
+        console.error("Error storing user data in Firestore:", error);
+      });
+    },
+  }
 };
 </script>
 <style>

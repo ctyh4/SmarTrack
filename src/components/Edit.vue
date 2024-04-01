@@ -22,13 +22,12 @@
 </template>
 
 <script>
-import firebaseApp from '@/firebase.js'
 import { getFirestore, doc, updateDoc } from "firebase/firestore"
-import { getAuth } from "firebase/auth"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Logout from '@/components/Logout.vue'
 
 export default {
-  name: 'EditProfile',
+  name: 'Edit',
   components: {
     Logout
   },

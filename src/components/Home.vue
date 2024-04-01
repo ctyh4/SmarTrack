@@ -72,7 +72,7 @@
   }
   </script>
   
-  <style>
+  <style scoped>
   h1 {
     font-family: pjs;
     font-size: 40px;

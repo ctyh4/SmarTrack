@@ -43,8 +43,8 @@ export default {
 
 <style scoped>
 #firebaseui-auth-container {
-  margin-top: 100px;
-  margin-bottom: 100px;  
+  margin-top: 50px;
+  margin-bottom: 50px;  
 }
 
 #pagecontent {

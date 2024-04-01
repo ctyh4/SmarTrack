@@ -59,7 +59,16 @@ export default {
 }
 </script>
   
+<<<<<<< HEAD
 <style scoped>
+=======
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+  }
+  </script>
+  
+  <style scoped>
+>>>>>>> 52c3f35f573e877c96c55a96d9d6db30790dc71c
   h1 {
     font-family: pjs;
     font-size: 40px;

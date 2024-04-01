@@ -27,7 +27,7 @@
 
             <button id="editbutton" type="button" @click="editProfile()">Edit</button>
         </div>
-        <Logout/>
+        
     </div>
 </template>
 
@@ -36,9 +36,7 @@
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
-import { getFirestore, collection, getDocs} from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
-import Logout from '@/components/Logout.vue'
+import { getFirestore, collection, getDocs, getDoc, query, where, doc} from "firebase/firestore";
 const db = getFirestore(firebaseApp);
 
 
@@ -56,23 +54,43 @@ export default {
         editProfile() {
             this.$router.push("/edit");
         },
-        async fetchData(userEmail) {
-            const q = query(collection(db, "users"), where("email", "==", userEmail));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach(doc => {
-                const userData = doc.data();
-                this.name = userData.displayName;
-                this.email = userData.email;
-                this.uid = userData.uid;
-            });
-        }
+        async fetchData(user) {
+            try {
+                const userEmail = String(user.email);
+                console.log(userEmail);
+
+                // Directly reference the document using its ID (user's email)
+                const docRef = doc(db, "Users", userEmail);
+                console.log(docRef);
+                // Fetch the document data
+                const docSnap = await getDoc(docRef);
+
+                // Check if the document exists
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const name = userData.Name;
+                    const uid = userData.UID;
+                    const email = userData.Email;
+                    console.log(userData); // Output for debugging
+                    // Update component data properties here if needed
+                    this.name = name;
+                    this.uid = uid;
+                    this.email = email;
+                } else {
+                    console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+            }
+
     },
     mounted() {
         const auth = getAuth();
         onAuthStateChanged (auth, user => {  
             if (user) {
                 this.user = user;
-                this.fetchData(this.user.email);
+                this.fetchData(user);
             }
         })
     },

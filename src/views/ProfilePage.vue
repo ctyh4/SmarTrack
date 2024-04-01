@@ -12,7 +12,7 @@ import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
 export default {
-    name: "Profile",
+    name: "ProfilePage",
     components: {
         Profile, Logout
     },
@@ -22,12 +22,12 @@ export default {
       };
     },
     mounted() {
-    const auth = getAuth();
-    onAuthStateChanged(auth,(user)=> {
-      if (user){
-        this.user = user;
+      const auth = getAuth();
+      onAuthStateChanged(auth,(user)=> {
+        if (user){
+          this.user = user;
       }
-    })
+    });
   },
   
 };

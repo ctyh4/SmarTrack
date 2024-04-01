@@ -1,35 +1,24 @@
 <template>
+  <sidebar></sidebar>
+    <div class="home-page">
     <div id="home-container">
         <h1>Welcome back!</h1>
         <h2>What would you like to do today?</h2>
     </div>
-  
-    <!-- <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="#">Profile</a>
-      <a href="#">Cards</a>
-      <a href="#">Discovery</a>
-      <a href="#">Payment Recommendation</a>
-      <a href="#">Tracking & Analysis</a>
-    </div>
-  
-    <span class = "menu" style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Home</span>
-    -->
-  
+
     <div class = "button-container">
-      <div class="first-button-container">
         <div class="button">
-          <button @click="$router.push('/profile')">
+        <button @click="$router.push('/Profile')">
             <img id = "icon" src = "./../assets/profile_icon.png">
             Profile</button>
-          <h3>Your personal details and settings.</h3>
+        <h3>Customise your personal details, preferences and settings.</h3>
         </div>
-  
+    
         <div class="button">
-          <button @click="$router.push('/cards')">
+        <button @click="$router.push('/cards')">
             <img id = "icon" src = "./../assets/cards_icon.png">
             Cards</button>
-          <h3>Where your inventory of cards are kept.</h3>
+        <h3>Where your inventory of cards are kept and managed with ease.</h3>
         </div>
   
         <div class="button">
@@ -39,9 +28,7 @@
           <h3>Looking for new bank cards?
           Check out some suggestions we have for you!</h3>
         </div>
-      </div>
-  
-      <div class="second-button-container">
+
         <div class="button">
           <button @click="$router.push('/payment')">
             <img id = "icon" src = "./../assets/payment_icon.png">
@@ -58,21 +45,21 @@
           <h3>Track your recent expenses, and 
             take a look at how close you are to your budgeting targets!</h3>
         </div>
-      </div>
     </div>
-  </template>
+    </div>
+</template>
   
-  <script>
-  function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
+<script>
+import Sidebar from '@/components/Sidebar.vue';
+
+export default {
+  components: {
+    'sidebar' : Sidebar,
   }
+}
+</script>
   
-  function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-  }
-  </script>
-  
-  <style>
+<style scoped>
   h1 {
     font-family: pjs;
     font-size: 40px;
@@ -88,7 +75,7 @@
   h3 {
     font-family: pjs;
     font-size: 13px;
-    width: 300px;
+    width: 290px;
     align-items: center;
   }
   
@@ -101,17 +88,26 @@
     margin-bottom: 25px;
   }
   
-  .home-container {
-    flex-direction: row;
-    flex-wrap: wrap;
+  .home-page {
+    align-items: center;
+    align-content: center;
     justify-content: center;
     display: flex;
+    flex-direction: column;
+  }
+
+  .home-container {
+    /* flex-direction: row;
+    flex-wrap: wrap; */
     justify-content: center;
-    align-items: center;
+    /* display: flex; */
+    align-items: flex-start;
+    align-content: flex-start;
     margin: auto;
     margin-left: auto;
     margin-right: auto;
-    height: 100vh; /* makes sure that the .home div takes up full viewport height */
+    /* height: 100vh; makes sure that the .home div takes up full viewport height */
+    text-align: center;
   }
   
   .button-container {
@@ -127,7 +123,7 @@
 
   .second-button-container {
     margin-top: 0;
-  }
+  } 
   
   .button {
     flex-direction: row; /* Stack buttons horizontally */
@@ -154,48 +150,6 @@
     background-color: transparent;
     opacity: 0.4;
   }
-  
-  .menu {
-    position: relative;
-  }
-  
-  .sidenav {
-    height: 100%;
-    width: 0;
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-  }
-  
-  .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-  }
-  
-  .sidenav a:hover {
-    color: #f1f1f1;
-  }
-  
-  .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
-  
-  @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-  }
-  </style>
+
+</style>
   

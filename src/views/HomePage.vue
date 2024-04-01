@@ -1,6 +1,6 @@
 <template>
   <Home />
-  <Logout />
+  <!-- <Logout /> -->
 </template>
 <script>
 import firebaseApp from "../firebase.js";
@@ -14,7 +14,9 @@ const db = getFirestore(firebaseApp);
 export default {
   name: "App",
   components: {
-    Home, Logout
+    Home, 
+    /* Logout
+    */
   },
   data() {
     return {

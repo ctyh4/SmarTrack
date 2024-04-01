@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center">
+  <div class = "login-container">
     <img id="bg" src="@/assets/SmarTrack.png" alt="" class="center"> 
     <div id="pagecontent">
       Make the best of your financial tools
@@ -43,6 +43,12 @@ export default {
 </script>
 
 <style scoped>
+.login-container {
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+
 #firebaseui-auth-container {
   margin-top: 50px;
   margin-bottom: 50px;

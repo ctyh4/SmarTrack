@@ -1,5 +1,5 @@
 <template>
-  <sidebar></sidebar>
+  <sidebar @update:sidebarState="handleSidebarState"></sidebar>
     <div class="home-page">
     <div id="home-container">
         <h1>Welcome back!</h1>
@@ -8,7 +8,7 @@
 
     <div class = "button-container">
         <div class="button">
-        <button @click="$router.push('/Profile')">
+        <button @click="$router.push('/profile')">
             <img id = "icon" src = "./../assets/profile_icon.png">
             Profile</button>
         <h3>Customise your personal details, preferences and settings.</h3>
@@ -55,20 +55,11 @@ import Sidebar from '@/components/Sidebar.vue';
 export default {
   components: {
     'sidebar' : Sidebar,
-  }
+  },
 }
 </script>
   
-<<<<<<< HEAD
 <style scoped>
-=======
-  function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-  }
-  </script>
-  
-  <style scoped>
->>>>>>> 52c3f35f573e877c96c55a96d9d6db30790dc71c
   h1 {
     font-family: pjs;
     font-size: 40px;
@@ -103,6 +94,7 @@ export default {
     justify-content: center;
     display: flex;
     flex-direction: column;
+    
   }
 
   .home-container {

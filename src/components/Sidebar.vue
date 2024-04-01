@@ -29,8 +29,8 @@
     
     methods: {
       toggleNav() {
-        this.isActive =!this.isActive;
-      }
+        this.isActive =!this.isActive;      
+        },
     }
   };
   </script>
@@ -39,6 +39,7 @@
   .sidebar-container {
     display: flex;
     height: 100vh;
+    position: absolute;
   }
   
   .page-router {
@@ -73,8 +74,7 @@
     /* z-index: 1; /* Lower z-index than sidebar */
     position: relative; /* Ensures correct positioning */
     overflow-x: hidden; /* Prevents content from spilling out */
-    left: 0;
-    display: flex;
+    display: flex;    
   }
       
   .pushMainContent {

@@ -1,15 +1,25 @@
 <template>
     <Profile />
-    <h3> profile page</h3>
+    <Logout />
 </template>
   
 <script>
 import Profile from "@/components/Profile.vue";
-import {getAuth, onAuthStateChanged} from "firebase/auth";
+import firebaseApp from "../firebase.js";
+import { getFirestore } from "firebase/firestore";
+import Logout from "@/components/Logout.vue";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+const db = getFirestore(firebaseApp);
+
 export default {
     name: "Profile",
     components: {
-        Profile,
+        Profile, Logout
+    },
+    data() {
+      return {
+        user: false,
+      };
     },
     mounted() {
     const auth = getAuth();

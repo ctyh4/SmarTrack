@@ -63,6 +63,11 @@ export default {
 
 <style>
 .edit-profile-container {
+  font-family: pjs;
   text-align: center;
+}
+
+#nameCell, #useridCell, #emailCell {
+    margin-bottom: 5px;
 }
 </style>

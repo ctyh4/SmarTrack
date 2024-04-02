@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/views/HomePage.vue";
 import ProfilePage from "@/views/ProfilePage.vue"
-import Edit from "@/views/EditPage.vue";
+import Edit from "@/components/Edit.vue";
 import Login from "@/components/Login.vue";
 import NotFound from "@/views/NotFoundPage.vue";
 import IndvCard from "@/components/IndvCard.vue";

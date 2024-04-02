@@ -106,6 +106,7 @@ export default {
 }
 
 #homebutton {
+    font-family: pjs;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -115,5 +116,6 @@ export default {
     text-align: center;
     margin: 4px 2px;
     cursor: pointer;
+    border-radius: 10px;
 }
 </style>

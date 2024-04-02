@@ -15,7 +15,8 @@
       </div>
       <hr>
 
-      <button id="savebutton" type="button" @click="saveProfile()">Save</button>
+      <button id="savebutton" type="button" @click="saveProfile()">Save</button><br>
+      <button id="cancelButton" type="button" @click="cancel()">Cancel</button>
     </div>
     <Logout/>
   </div>
@@ -24,13 +25,9 @@
 <script>
 import { getFirestore, doc, updateDoc } from "firebase/firestore"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import Logout from '@/components/Logout.vue'
 
 export default {
   name: 'Edit',
-  components: {
-    Logout
-  },
   data() {
     return {
       user: false,
@@ -48,14 +45,23 @@ export default {
   },
   methods: {
     async saveProfile() {
-      const userDoc = doc(getFirestore(), 'users', this.user.uid)
+      const userDoc = doc(getFirestore(), "Users", auth.currentUser.email);
       await updateDoc(userDoc, {
         displayName: this.user.displayName,
-        email: this.user.email
-      })
+        email: this.user.email,
+      });
 
-      this.$router.push('/profile')
-    }
+      await updateProfile(auth.currentUser, {
+        displayName: this.user.displayName,
+        email: this.user.email,
+      });
+
+      this.$router.push("/profile");
+    },
+
+    cancel() {
+      this.$router.push("/profile");
+    },
   }
 }
 </script>
@@ -68,5 +74,18 @@ export default {
 
 #nameCell, #useridCell, #emailCell {
     margin-bottom: 5px;
+}
+.edit-profile-container {
+  align-items: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+#savebutton {
+  margin-bottom: 15px;
 }
 </style>

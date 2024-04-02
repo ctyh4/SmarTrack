@@ -4,6 +4,7 @@ import ProfilePage from "@/views/ProfilePage.vue"
 import Edit from "@/views/EditPage.vue";
 import Login from "@/components/Login.vue";
 import NotFound from "@/views/NotFoundPage.vue";
+import IndvCard from "@/components/IndvCard.vue";
 
 
 const routes = [
@@ -28,10 +29,16 @@ const routes = [
     component: Edit,
   },
   {
+    path: "/indvcard",
+    name: "Indv Card",
+    component: IndvCard,
+  },
+  {
     path: "/:catchAll(.*)",
     name: "NotFound",
     component: NotFound,
   },
+  
 ];
 
 const router = createRouter({

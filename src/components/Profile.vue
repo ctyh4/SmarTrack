@@ -25,7 +25,7 @@
             </div>
             <hr>
 
-            <button id="editbutton" type="button" @click="editProfile()">Edit</button>
+            <button id="editbutton" type="button" @click="$router.push('/edit')">Edit</button>
         </div>
         
     </div>
@@ -51,9 +51,6 @@ export default {
         };
     },
     methods: {
-        editProfile() {
-            this.$router.push("/edit");
-        },
         async fetchData(user) {
             try {
                 const userEmail = String(user.email);

@@ -36,7 +36,7 @@
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
-import { getFirestore, collection, getDocs, getDoc, query, where, doc} from "firebase/firestore";
+import { getFirestore, getDoc, doc} from "firebase/firestore";
 const db = getFirestore(firebaseApp);
 
 

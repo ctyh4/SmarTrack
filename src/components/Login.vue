@@ -11,7 +11,7 @@
     <!-- Form to collect email for sign-up -->
     <form  @submit.prevent="signUp">
       <input class="input-1" type="email" v-model="email" placeholder="Enter your email">
-      <button class="button-6" role="button" id type="submit">Sign Up</button>
+      <button class="button-6" type="submit">Sign Up</button>
     </form>
 
 
@@ -43,6 +43,7 @@ export default {
       // Get the email if available. This should be available if the user completes
       // the flow on the same device where they started it.
       let email = window.localStorage.getItem('emailForSignIn');
+      console.log(window.localStorage.getItem('inside Is Sign In'));
       if (!email) {
         // User opened the link on a different device. To prevent session fixation
         // attacks, ask the user to provide the associated email again. For example:
@@ -52,7 +53,17 @@ export default {
       signInWithEmailLink(auth, email, window.location.href)
         .then((result) => {
           // Clear email from storage.
+          console.log("inside signin func");
           window.localStorage.removeItem('emailForSignIn');
+          const user = auth.currentUser;
+          console.log(user);
+          if (user) {
+            // User is authenticated, redirect to the home page
+            this.$router.push("/home"); // Assuming "/home" is the route for the home page
+          } else {
+            // User is not authenticated, handle the situation accordingly
+            console.log("User not authenticated");
+          }
           // You can access the new user via result.user
           // Additional user info profile not available via:
           // result.additionalUserInfo.profile == null
@@ -60,6 +71,7 @@ export default {
           // result.additionalUserInfo.isNewUser
         })
         .catch((error) => {
+          console.log(error)
           // Some error occurred, you can inspect the code: error.code
           // Common errors could be invalid email and invalid or expired OTPs.
         });
@@ -91,18 +103,23 @@ export default {
         url: window.location.origin,
         handleCodeInApp: true,
       };
+      console.log(actionCodeSettings)
+      
       try {
         await sendSignInLinkToEmail(auth, this.email, actionCodeSettings)
         .then(() => {
         // The link was successfully sent. Inform the user.
         // Save the email locally so you don't need to ask the user for it again
         // if they open the link on the same device.
+        console.log("test")
         window.localStorage.setItem('emailForSignIn', this.email);
+        console.log(window.localStorage.getItem('emailForSignIn'));
         })
       } catch (error) {
         console.error("Error sending sign-in link:", error);
         alert("Failed to send sign-in link. Please try again later.");
       }
+      
     }
   }
 };

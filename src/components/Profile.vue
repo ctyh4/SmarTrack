@@ -1,4 +1,5 @@
 <template>
+    <div v-if="user">
     <div class="profile-container" v-if="user">
         <div>
             <button id="homebutton" type="button" @click="$router.push('/home')">Home</button>
@@ -29,6 +30,7 @@
         </div>
         
     </div>
+    </div>
 </template>
 
 
@@ -44,7 +46,7 @@ export default {
     name: "Profile",
     data() { 
         return { 
-            user: null, 
+            user: false, 
             name: "",
             email: "",
             uid: ""

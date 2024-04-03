@@ -1,9 +1,12 @@
 <template>
-  <sidebar></sidebar>
+  <div v-if="user"> 
+    <sidebar></sidebar>
   <div class="profilepage">
     <Profile /><br>
     <Logout />
   </div>
+  </div>
+  
 </template>
   
 <script>

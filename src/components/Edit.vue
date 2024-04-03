@@ -1,6 +1,5 @@
 <template>
-  <div v-if="user">
-  <div class="edit-profile-container">
+  <div class="edit-profile-container" v-if="user">
     <div>
       <h1> Edit Profile </h1>
 
@@ -21,7 +20,6 @@
       <button id="cancelButton" type="button" @click="cancel()">Cancel</button>
     </div>
   </div>
-</div>
 </template>
 
 <script>

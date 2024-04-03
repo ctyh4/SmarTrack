@@ -1,4 +1,5 @@
 <template>
+  <div v-if="user">
     <div class="sidebar-container">
       <div id="mySidenav" class="sidenav" :class="{ 'openNavClass': isActive }">
         <a class="closebtn" @click="toggleNav">&times;</a>
@@ -18,16 +19,28 @@
            @click="toggleNav">Home</span>
       </div>
     </div>
+  </div>
   </template>
       
   <script>
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  
   export default {
     data() {
       return {
         isActive: false,
+        user:false,
       };
     },
-    
+
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth,(user)=> {
+        if (user){
+          this.user = user;
+        }
+      })
+    },
     methods: {
       toggleNav() {
         this.isActive =!this.isActive;

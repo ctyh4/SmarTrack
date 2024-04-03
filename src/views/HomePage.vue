@@ -1,6 +1,9 @@
 <template>
-  <Home />
+ 
+    <Home />
   <!-- <Logout /> -->
+
+  
 </template>
 <script>
 import firebaseApp from "../firebase.js";
@@ -20,7 +23,7 @@ export default {
   },
   data() {
     return {
-      refreshComp: 0,
+      user: false,
     };
   },
   mounted() {

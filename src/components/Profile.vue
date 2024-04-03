@@ -1,10 +1,9 @@
 <template>
+    <div v-if="user">
     <div class="profile-container" v-if="user">
         <div>
-            <button id="homebutton" type="button" @click="$router.push('/home')">Home</button>
-
+            
             <h1> Your Profile </h1>
-
 
             <div id="nameCell">
                 <h3>Name:</h3>
@@ -27,7 +26,7 @@
 
             <button id="editbutton" type="button" @click="$router.push('/edit')">Edit</button>
         </div>
-        
+    </div>    
     </div>
 </template>
 
@@ -44,7 +43,7 @@ export default {
     name: "Profile",
     data() { 
         return { 
-            user: null, 
+            user: false, 
             name: "",
             email: "",
             uid: ""
@@ -94,28 +93,21 @@ export default {
 }
 </script>
 
-
 <style>
 .profile-container {
     font-family: pjs;
     text-align: center;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #nameCell, #useridCell, #emailCell {
     margin-bottom: 5px;
 }
 
-#homebutton {
-    font-family: pjs;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #7F56D9;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 10px;
-}
 </style>

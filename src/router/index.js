@@ -4,7 +4,9 @@ import ProfilePage from "@/views/ProfilePage.vue"
 import Edit from "@/components/Edit.vue";
 import Login from "@/components/Login.vue";
 import NotFound from "@/views/NotFoundPage.vue";
-import IndvCard from "@/components/IndvCard.vue";
+import IndvCard from "@/views/IndvCardPage.vue";
+import CompareCard from "@/views/CompareCardsPage.vue";
+
 
 
 const routes = [
@@ -32,6 +34,11 @@ const routes = [
     path: "/indvcard",
     name: "Indv Card",
     component: IndvCard,
+  },
+  {
+    path: "/compare",
+    name: "Compare Card",
+    component: CompareCard,
   },
   {
     path: "/:catchAll(.*)",

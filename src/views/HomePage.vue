@@ -5,7 +5,7 @@
 <script>
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc,getDoc } from "firebase/firestore";
 import Home from "@/components/Home.vue";
 import Logout from "@/components/Logout.vue";
 import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
@@ -36,8 +36,13 @@ export default {
     change() {
       this.refreshComp += 1;
     },
-    storeFS(user) {
-      setDoc(doc(db, "Users", String(user.email)), {
+    async storeFS(user) {
+      const docRef = doc(db, "Users", String(user.email));
+      console.log(docRef);
+      // Fetch the document data
+      const docSnap = await getDoc(docRef);
+      if(!docSnap.exists()) {
+        setDoc(doc(db, "Users", String(user.email)), {
         Name: user.displayName,
         Email: user.email,
         UID: user.uid
@@ -48,6 +53,7 @@ export default {
       .catch(error => {
         console.error("Error storing user data in Firestore:", error);
       });
+      }
     },
   }
 };

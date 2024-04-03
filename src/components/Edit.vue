@@ -3,62 +3,87 @@
     <div>
       <h1> Edit Profile </h1>
 
-      <div id="nameCell">
-        <h3>Name:</h3>
-        <input id="name" v-model="user.displayName" type="text">
-      </div>
-      <hr>
-
       <div id="emailCell">
         <h3>Email:</h3>
-        <input id="email" v-model="user.email" type="email">
+        <p>{{ user.email }}</p>
       </div>
       <hr>
 
-      <button id="savebutton" type="button" @click="saveProfile()">Save</button><br>
+      <div id="nameCell">
+        <h3>Name:</h3>
+        <input id="name" v-model="displayName"  type="text">
+      </div>
+      <hr>
+
+
+      <button id="savebutton" type="button" @click="saveProfile(user)">Save</button><br>
       <button id="cancelButton" type="button" @click="cancel()">Cancel</button>
     </div>
-    <Logout/>
   </div>
 </template>
 
 <script>
-import { getFirestore, doc, updateDoc } from "firebase/firestore"
+import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import firebaseApp from "../firebase.js";
+const db = getFirestore(firebaseApp);
 
 export default {
   name: 'Edit',
   data() {
     return {
-      user: false,
+      user: null,
+      displayName: "",
     }
   },
   mounted() {
-    const auth = getAuth()
-    const db = getFirestore()
-
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        this.user = user
-      }
-    })
-  },
-  methods: {
-    async saveProfile() {
-      const userDoc = doc(getFirestore(), "Users", auth.currentUser.email);
-      await updateDoc(userDoc, {
-        displayName: this.user.displayName,
-        email: this.user.email,
-      });
-
-      await updateProfile(auth.currentUser, {
-        displayName: this.user.displayName,
-        email: this.user.email,
-      });
-
-      this.$router.push("/profile");
+        const auth = getAuth();
+        onAuthStateChanged (auth, user => {  
+            if (user) {
+                this.user = user;
+                this.fetchData(user);
+            }
+        })
     },
+  methods: {
+    async fetchData(user) {
+            try {
+                const userEmail = String(user.email);
+                console.log(userEmail);
 
+                // Directly reference the document using its ID (user's email)
+                const docRef = doc(db, "Users", userEmail);
+                console.log(docRef);
+                // Fetch the document data
+                const docSnap = await getDoc(docRef);
+
+                // Check if the document exists
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const name = userData.Name;
+                    console.log(userData); // Output for debugging
+                    // Update component data properties here if needed
+                    this.displayName = name;
+                    
+                } else {
+                    console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+      },
+    async saveProfile(user) {
+      try {
+        const userDocRef = doc(getFirestore(), "Users", String(user.email));
+        await updateDoc(userDocRef, {
+          Name: this.displayName,
+        });
+        console.log(this.displayName);
+        this.$router.push("/profile");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
+    },
     cancel() {
       this.$router.push("/profile");
     },

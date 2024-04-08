@@ -1,6 +1,6 @@
 <template>
-  <sidebar @update:sidebarState="handleSidebarState"></sidebar>
-    <div class="home-page">
+  <sidebar @toggle="handleSidebarToggle" />
+    <div class="home-page" :class="{ 'pushMainContent': sidebarActive }">
     <div id="home-container">
         <h1>Welcome back!</h1>
         <h2>What would you like to do today?</h2>
@@ -56,15 +56,26 @@ export default {
   components: {
     'sidebar' : Sidebar,
   },
+  data() {
+    return {
+      sidebarActive: false,
+    };
+  },
+  methods: {
+    handleSidebarToggle(isActive) {
+      this.sidebarActive = isActive;
+    }
+  },
 }
 </script>
   
-<style scoped>
+<style>
   h1 {
     font-family: pjs;
     font-size: 40px;
     font-weight: bold;
     color: black;
+    margin-bottom: 15px;
   }
   
   h2 {
@@ -101,13 +112,11 @@ export default {
     /* flex-direction: row;
     flex-wrap: wrap; */
     justify-content: center;
-    /* display: flex; */
     align-items: flex-start;
     align-content: flex-start;
     margin: auto;
     margin-left: auto;
     margin-right: auto;
-    /* height: 100vh; makes sure that the .home div takes up full viewport height */
     text-align: center;
   }
   
@@ -152,5 +161,8 @@ export default {
     opacity: 0.4;
   }
 
+.pushMainContent {
+  margin-left: 250px; /* Match this with the sidebar's width */
+}
 </style>
   

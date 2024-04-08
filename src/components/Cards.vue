@@ -1,0 +1,221 @@
+<template>
+    <sidebar @toggle="handleSidebarToggle" />
+    <div class="cards-page">
+
+        <div class="top-nav">
+            <button id="home-button" type="button" @click="$router.push('/home')">Home</button>
+            <button id="filter-button" type="button">Filters</button>
+            <!-- <div id="search-bar-container">
+              <input id = "search-bar" type="text" placeholder="Search here">
+            </div> -->
+            <button id="add-card-button" type="button">Add Card</button>
+        </div>
+
+        <div class="filter-bar">
+            
+        </div>
+
+        <div class="inventory">
+            <div id="search-bar-container">
+              <input id="search-bar"
+               onkeyup="search()"
+               type="text" name="search"
+               placeholder="Search here">
+ 
+              <ul id='list'>
+                  <li class="cards"><a href="#">OCBC Great Eastern Cashflo Credit Card</a></li>
+                  <li class="cards"><a href="#">OCBC Frank Debit Card</a></li>
+                  <li class="cards"><a href="#">HSBS Revolution Credit Card</a></li>
+                  <li class="cards"><a href="#">POSB Everyday Credit Card</a></li>
+                  <li class="cards"><a href="#">POSB Debit Card</a></li>
+                  <li class="cards"><a href="#">UOB UnionPay Platinum Card</a></li>
+                  <li class="cards"><a href="#">DBS Yuu Card</a></li>
+                  <li class="cards"><a href="#">DBS Live Fresh Card</a></li>
+              </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import Sidebar from '@/components/Sidebar.vue';
+
+export default {
+  components: {
+    'sidebar' : Sidebar,
+  },
+  data() {
+    return {
+      sidebarActive: false,
+    };
+  },
+  methods: {
+    handleSidebarToggle(isActive) {
+      this.sidebarActive = isActive;
+    }
+  },
+}
+
+function search() {
+  let input = document.getElementById('search-bar').value
+  input = input.toLowerCase();
+  let x = document.getElementsByClassName('cards');
+ 
+  for (i = 0; i < x.length; i++) {
+    if (!x[i].innerHTML.toLowerCase().includes(input)) {
+      x[i].style.display = "none";
+    }
+    else {
+      x[i].style.display = "list-item";
+    }
+  }
+}
+</script>
+
+<style>
+.cards-page {
+    text-align: center;
+    align-items: center;
+    margin: auto;
+}
+
+.top-nav {
+  overflow: hidden;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 20px;
+  color: #7F56D9;
+}
+
+/* Style the links inside the navigation bar */
+.top-nav a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.top-nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the "active" element to highlight the current page */
+.top-nav a.active {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Style the search box inside the navigation bar */
+.search-bar input[type=text] {
+  float: right;
+  padding: 6px;
+  border: none;
+  margin: auto;
+  margin-top: 8px;
+  font-size: 15px;
+  font-family: pjs;
+  width: 400px;
+}
+
+/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+@media screen and (max-width: 600px) {
+  .top-nav a, .top-nav input[type=text] {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  .top-nav input[type=text] {
+    border: 1px solid #ccc;
+  }
+}
+
+#home-button, #filter-button {
+    top: 25px;
+    right: 10px;
+    background-color: #7F56D9;
+    font-family: pjs;
+    font-weight: 600;
+    font-size: 15px;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 80px;
+    border-radius: 5px;
+}
+
+#add-card-button {
+    top: 25px;
+    right: 10px;
+    font-family: pjs;
+    font-weight: 600;
+    font-size: 15px;
+    color: #7F56D9;
+    padding: 5px 10px;
+    text-align: center;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 100px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #7F56D9;
+}
+
+#home-button {
+    position: absolute;
+}
+
+.search-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+ 
+#search-bar {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 50%;
+    box-sizing: border-box;
+}
+ 
+#list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ 
+.cards {
+    font-size: 1.2em;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    animation: fadeIn 0.5s ease-in-out;
+}
+ 
+.cards:last-child {
+    border-bottom: none;
+}
+ 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+ 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>

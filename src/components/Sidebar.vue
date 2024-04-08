@@ -5,7 +5,7 @@
     
         <!-- <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Home')">Home</a> -->
         <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Profile')">Profile</a>
-        <a class = "page-router" @click="$router.push('/Cards')">Cards</a>
+        <a v-if="$route.path !== '/Cards'" class = "page-router" @click="$router.push('/Cards')">Cards</a>
         <a class = "page-router" @click="$router.push('/Discovery')">Discovery</a>
         <a class = "page-router" @click="$router.push('/Payment')">Payment Recommendation</a>
         <a class = "page-router" @click="$router.push('/Tracking')">Tracking & Analysis</a>
@@ -29,8 +29,9 @@
     
     methods: {
       toggleNav() {
-        this.isActive =!this.isActive;      
-        },
+        this.isActive =!this.isActive;  
+        this.$emit('toggle', this.isActive); // Emitting an event named 'toggle'    
+      },
     }
   };
   </script>
@@ -39,7 +40,7 @@
   .sidebar-container {
     display: flex;
     height: 100vh;
-    position: absolute;
+    position: absolute; /* Places home menu div over entire page div */
   }
   
   .page-router {
@@ -52,13 +53,13 @@
   .sidenav {
     height: 100vh;
     width: 0; /* Sidebar is hidden initially */
-    position: fixed; /* Changed from fixed to relative */
+    position: fixed; 
     z-index: 2; /* Ensures sidebar is over main content */
     top: 0;
     left: 0;
-    background-color: #111;
-    overflow-x: hidden; /* Prevents content from spilling out */
-    transition: width 0.5s; /* Smooth transition for the width */
+    background-color: black;
+    overflow-x: hidden; /* Prevents content from spilling out of page */
+    transition: width 0.3s linear; /* Smooth linear transition for the width */
     padding-top: 0px;
   }
       
@@ -68,33 +69,34 @@
       
   #main {
     flex-grow: 1; /* Takes up the remaining space */
-    transition: margin-left .5s; /* Smooth transition for the main content */
+    transition: margin-left 0.3s linear; /* Smooth linear transition for main content */
     padding: 16px;
     width: 100%;
-    /* z-index: 1; /* Lower z-index than sidebar */
     position: relative; /* Ensures correct positioning */
-    overflow-x: hidden; /* Prevents content from spilling out */
+    overflow-x: hidden; 
     display: flex;    
   }
       
   .pushMainContent {
-    margin-left: 250px; /* Pushes the main content when sidebar opens */
-  }
+    margin-left: 250px; /* Pushes main content when sidebar opens */
+    transition: 0.3s;
+}
       
   .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none; 
     font-size: 20px;
-    color: #818181;
+    color: #9a9a9a;
     display: block;
-    transition: color 0.3s;
+    transition: color 0.3s linear;
     font-family: pjs;
     margin-top: 20px;
   }
       
   .sidenav a:hover {
     color: #f1f1f1;
-    }
+    cursor: pointer;
+  }
       
   .sidenav .closebtn {
     position: absolute;

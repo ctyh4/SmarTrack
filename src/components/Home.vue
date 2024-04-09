@@ -1,6 +1,6 @@
 <template>
   <sidebar></sidebar>
-    <div class="home-page">
+    <div class="home-page" v-if="user">
     <div id="home-container">
         <h1>Welcome back!</h1>
         <h2>What would you like to do today?</h2>
@@ -51,8 +51,22 @@
   
 <script>
 import Sidebar from '@/components/Sidebar.vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
+  data() {
+    return {
+      user:false,
+    }
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth,(user)=> {
+      if (user){
+        this.user = user;
+      }
+    })
+  },
   components: {
     'sidebar' : Sidebar,
   }

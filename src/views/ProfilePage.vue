@@ -1,9 +1,15 @@
-<template>
-    <Profile />
+<template v-if="user">
+  <Sidebar/>
+  <HomeButton/>
+  <div class="profilepage">
+    <Profile /><br>
     <Logout />
+  </div>
 </template>
   
 <script>
+import HomeButton from '@/components/HomeButton.vue';
+import Sidebar from '@/components/Sidebar.vue';
 import Profile from "@/components/Profile.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
@@ -14,7 +20,10 @@ const db = getFirestore(firebaseApp);
 export default {
     name: "ProfilePage",
     components: {
-        Profile, Logout
+        Profile, 
+        Logout,
+        HomeButton,
+        Sidebar,
     },
     data() {
       return {
@@ -33,4 +42,11 @@ export default {
 };
 </script>
 
+<style>
+.profilepage {
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
   

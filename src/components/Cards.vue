@@ -1,5 +1,5 @@
 <template>
-    <sidebar @toggle="handleSidebarToggle" />
+  <Sidebar @toggle="handleSidebarToggle" />
     <div class="cards-page">
 
         <div class="top-nav">
@@ -8,7 +8,8 @@
             <!-- <div id="search-bar-container">
               <input id = "search-bar" type="text" placeholder="Search here">
             </div> -->
-            <button id="add-card-button" type="button">Add Card</button>
+            <button id="add-card-button" type="button" @click="showAddCardForm = true">Add Card</button>
+            <AddCardForm :isVisible="showAddCardForm" @confirmed="addCard" />
         </div>
 
         <div class="filter-bar">
@@ -16,63 +17,67 @@
         </div>
 
         <div class="inventory">
-            <div id="search-bar-container">
-              <input id="search-bar"
-               onkeyup="search()"
-               type="text" name="search"
-               placeholder="Search here">
- 
-              <ul id='list'>
-                  <li class="cards"><a href="#">OCBC Great Eastern Cashflo Credit Card</a></li>
-                  <li class="cards"><a href="#">OCBC Frank Debit Card</a></li>
-                  <li class="cards"><a href="#">HSBS Revolution Credit Card</a></li>
-                  <li class="cards"><a href="#">POSB Everyday Credit Card</a></li>
-                  <li class="cards"><a href="#">POSB Debit Card</a></li>
-                  <li class="cards"><a href="#">UOB UnionPay Platinum Card</a></li>
-                  <li class="cards"><a href="#">DBS Yuu Card</a></li>
-                  <li class="cards"><a href="#">DBS Live Fresh Card</a></li>
-              </ul>
-            </div>
+          <div class="card" v-for="card in cards" :key="card.id">
+            {{ card.name }}
+          </div>
         </div>
     </div>
 </template>
 
 <script>
 import Sidebar from '@/components/Sidebar.vue';
+import AddCardForm from './AddCardForm.vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   components: {
-    'sidebar' : Sidebar,
+    Sidebar,
+    AddCardForm,
   },
   data() {
     return {
+      user:null,
       sidebarActive: false,
+      showAddCardForm: false,
+      cards: [],
     };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, user => {
+      if (user){
+        this.user = user;
+      }
+    })
   },
   methods: {
     handleSidebarToggle(isActive) {
       this.sidebarActive = isActive;
-    }
+    },
+    addCard(cardName) {
+      this.cards.push({ name: cardName });
+      this.showAddCardForm = false;
+    },
   },
 }
 
-function search() {
-  let input = document.getElementById('search-bar').value
-  input = input.toLowerCase();
-  let x = document.getElementsByClassName('cards');
+// function search() {
+//   let input = document.getElementById('search-bar').value
+//   input = input.toLowerCase();
+//   let x = document.getElementsByClassName('cards');
  
-  for (i = 0; i < x.length; i++) {
-    if (!x[i].innerHTML.toLowerCase().includes(input)) {
-      x[i].style.display = "none";
-    }
-    else {
-      x[i].style.display = "list-item";
-    }
-  }
-}
+//   for (i = 0; i < x.length; i++) {
+//     if (!x[i].innerHTML.toLowerCase().includes(input)) {
+//       x[i].style.display = "none";
+//     }
+//     else {
+//       x[i].style.display = "list-item";
+//     }
+//   }
+// }
 </script>
 
-<style>
+<style scoped>
 .cards-page {
     text-align: center;
     align-items: center;
@@ -217,5 +222,9 @@ function search() {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.pushMainContent {
+  margin-left: 250px; /* Match this with the sidebar's width */
 }
 </style>

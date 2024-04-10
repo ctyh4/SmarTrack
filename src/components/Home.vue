@@ -1,4 +1,5 @@
 <template>
+  <!-- <div v-if="user"> -->
   <sidebar @toggle="handleSidebarToggle" />
     <div class="home-page" :class="{ 'pushMainContent': sidebarActive }">
     <div id="home-container">
@@ -9,30 +10,26 @@
     <div class = "button-container">
         <div class="button">
         <button @click="$router.push('/profile')">
-            <img id = "icon" src = "./../assets/profile_icon.png">
-            Profile</button>
+            <img id = "icon" src = "./../assets/profile_icon.png">Profile</button>
         <h3>Customise your personal details, preferences and settings.</h3>
         </div>
     
         <div class="button">
         <button @click="$router.push('/cards')">
-            <img id = "icon" src = "./../assets/cards_icon.png">
-            Cards</button>
+            <img id = "icon" src = "./../assets/cards_icon.png">Cards</button>
         <h3>Where your inventory of cards are kept and managed with ease.</h3>
         </div>
   
         <div class="button">
           <button @click="$router.push('/discovery')">
-            <img id = "icon" src = "./../assets/discovery_icon.png">
-            Discovery</button>
+            <img id = "icon" src = "./../assets/discovery_icon.png">Discovery</button>
           <h3>Looking for new bank cards?
           Check out some suggestions we have for you!</h3>
         </div>
 
         <div class="button">
           <button @click="$router.push('/payment')">
-            <img id = "icon" src = "./../assets/payment_icon.png">
-            Payment Recommendation</button>
+            <img id = "icon" src = "./../assets/payment_icon.png">Payment Recommendation</button>
           <h3>Get a suggestion on the most optimal card to use for maximum benefits, 
             and pay instantly!
           </h3>
@@ -40,19 +37,33 @@
   
         <div class="button">
           <button @click="$router.push('/tracking')">
-            <img id = "icon" src = "./../assets/tracking_icon.png">
-            Tracking & Analysis</button>
+            <img id = "icon" src = "./../assets/tracking_icon.png">Tracking & Analysis</button>
           <h3>Track your recent expenses, and 
             take a look at how close you are to your budgeting targets!</h3>
         </div>
     </div>
     </div>
+  <!-- </div> -->
 </template>
   
 <script>
 import Sidebar from '@/components/Sidebar.vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
+  data() {
+    return {
+      user:false,
+    }
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth,(user)=> {
+      if (user){
+        this.user = user;
+      }
+    })
+  },
   components: {
     'sidebar' : Sidebar,
   },
@@ -158,7 +169,7 @@ export default {
   
   button:hover {
     background-color: transparent;
-    opacity: 0.4;
+    opacity: 0.3;
   }
 
 .pushMainContent {

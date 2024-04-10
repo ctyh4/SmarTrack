@@ -1,32 +1,57 @@
 <template>
+  <div v-if="user">
     <div class="sidebar-container">
       <div id="mySidenav" class="sidenav" :class="{ 'openNavClass': isActive }">
         <a class="closebtn" @click="toggleNav">&times;</a>
-    
-        <!-- <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Home')">Home</a> -->
-        <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Profile')">Profile</a>
-        <a v-if="$route.path !== '/Cards'" class = "page-router" @click="$router.push('/Cards')">Cards</a>
-        <a class = "page-router" @click="$router.push('/Discovery')">Discovery</a>
-        <a class = "page-router" @click="$router.push('/Payment')">Payment Recommendation</a>
-        <a class = "page-router" @click="$router.push('/Tracking')">Tracking & Analysis</a>
+
+        <div id="tabs">
+          <a v-if="$route.path !== '/home'" class = "page-router"  @click="$router.push('/home')">Home</a> 
+          <a v-if="$route.path !== '/profile'" class = "page-router" @click="$router.push('/profile')">Profile</a>
+          <a v-if="$route.path !== '/cards'" class = "page-router" @click="$router.push('/cards')">Cards</a>
+          <a v-if="$route.path !== '/discovery'" class = "page-router" @click="$router.push('/discovery')">Discovery</a>
+          <a v-if="$route.path !== '/payment'" class = "page-router" @click="$router.push('/payment')">Payment Recommendation</a>
+          <a v-if="$route.path !== '/tracking'" class = "page-router" @click="$router.push('/tracking')">Tracking & Analysis</a>
+          <a v-if="$route.path !== '/indvcard'" class = "page-router" @click="$router.push('/indvcard')">Individual Card</a>
+        </div>
       </div>
       
       <div id="main" :class="{ 'pushMainContent': isActive }">
         <span style="font-size: 30px; cursor: pointer;" @click="toggleNav">&#9776;</span>
         <span style = "cursor: pointer; font-family: pjs; font-weight: bold; font-size: 20px; margin-left: 9px; margin-top: 9px;" 
-           @click="toggleNav">Home</span>
+           @click="toggleNav">
+           {{ pageName }}
+          </span>
       </div>
     </div>
+  </div>
   </template>
       
   <script>
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  
   export default {
     data() {
       return {
         isActive: false,
+        user:false,
       };
     },
-    
+
+    computed: {
+      pageName() {
+        const pageName = this.$route.path.split('/').filter(n => n).pop();
+        return pageName.charAt(0).toUpperCase() + pageName.slice(1);
+      },
+    },
+
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth,(user)=> {
+        if (user){
+          this.user = user;
+        }
+      })
+    },
     methods: {
       toggleNav() {
         this.isActive =!this.isActive;  
@@ -50,11 +75,13 @@
     font-size: 50px;
   }
   
+  #tabs {
+    margin-top: 50px;
+  }
   .sidenav {
     height: 100vh;
-    width: 0; /* Sidebar is hidden initially */
+    width: 0; /* Sidebar hidden initially */
     position: fixed; 
-    z-index: 2; /* Ensures sidebar is over main content */
     top: 0;
     left: 0;
     background-color: black;
@@ -72,14 +99,14 @@
     transition: margin-left 0.3s linear; /* Smooth linear transition for main content */
     padding: 16px;
     width: 100%;
-    position: relative; /* Ensures correct positioning */
+    position: relative; 
     overflow-x: hidden; 
     display: flex;    
   }
       
   .pushMainContent {
-    margin-left: 250px; /* Pushes main content when sidebar opens */
-    transition: 0.3s;
+    margin-left: 250px; /* Push main content to the right by 250px when sidebar opens */
+    transition: 0.3s linear;
 }
       
   .sidenav a {

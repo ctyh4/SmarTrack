@@ -1,10 +1,9 @@
 <template>
+    <div v-if="user">
     <div class="profile-container" v-if="user">
         <div>
-            <button id="homebutton" type="button" @click="$router.push('/home')">Home</button>
-
+            
             <h1> Your Profile </h1>
-
 
             <div id="nameCell">
                 <h3>Name:</h3>
@@ -25,9 +24,9 @@
             </div>
             <hr>
 
-            <button id="editbutton" type="button" @click="editProfile()">Edit</button>
+            <button id="editbutton" type="button" @click="$router.push('/edit')">Edit</button>
         </div>
-        
+    </div>    
     </div>
 </template>
 
@@ -36,7 +35,7 @@
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
-import { getFirestore, collection, getDocs, getDoc, query, where, doc} from "firebase/firestore";
+import { getFirestore, getDoc, doc} from "firebase/firestore";
 const db = getFirestore(firebaseApp);
 
 
@@ -44,16 +43,13 @@ export default {
     name: "Profile",
     data() { 
         return { 
-            user: null, 
+            user: false, 
             name: "",
             email: "",
             uid: ""
         };
     },
     methods: {
-        editProfile() {
-            this.$router.push("/edit");
-        },
         async fetchData(user) {
             try {
                 const userEmail = String(user.email);
@@ -97,26 +93,21 @@ export default {
 }
 </script>
 
-
 <style>
 .profile-container {
     font-family: pjs;
     text-align: center;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #nameCell, #useridCell, #emailCell {
     margin-bottom: 5px;
 }
 
-#homebutton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #7F56D9;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    margin: 4px 2px;
-    cursor: pointer;
-}
 </style>

@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/views/HomePage.vue";
 import ProfilePage from "@/views/ProfilePage.vue"
-import Edit from "@/views/EditPage.vue";
+import Edit from "@/components/Edit.vue";
 import Login from "@/components/Login.vue";
 import NotFound from "@/views/NotFoundPage.vue";
 import CardsPage from "@/views/CardsPage.vue";
-
+import IndvCard from "@/views/IndvCardPage.vue";
+import CompareCard from "@/views/CompareCardsPage.vue";
 
 const routes = [
   {
@@ -27,6 +28,16 @@ const routes = [
     path: "/edit",
     name: "Edit",
     component: Edit,
+  },
+  {
+    path: "/indvcard",
+    name: "Indv Card",
+    component: IndvCard,
+  },
+  {
+    path: "/ompare",
+    name: "Compare Card",
+    component: CompareCard,
   },
   {
     path: "/:catchAll(.*)",

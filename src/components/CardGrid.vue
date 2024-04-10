@@ -23,6 +23,8 @@ export default {
       cards: [],
       filteredCards: [], // Data that will be rendered in the grid
       searchTerm: "", // The term to filter cards by
+      minCashback: 0, // Minimum cash back percentage for filtering
+      maxAnnualFee: 1000, // Maximum annual fee for filtering
       noResultsFound: false,
     };
   },
@@ -30,7 +32,6 @@ export default {
     this.fetchCards().then(() => {
       this.filterCards();
     });
-    console.log(this.searchTerm);
   },
   methods: {
     async fetchCards() {
@@ -40,25 +41,36 @@ export default {
           id: doc.id,
           ...doc.data(),
         }));
+        console.log("Done fetching cards " + this.filteredCards.length);
       } catch (error) {
         console.error("Error fetching cards:", error);
       }
     },
     filterCards() {
-      if (this.searchTerm) {
-        this.noResultsFound = false;
-        this.filteredCards = this.cards.filter((card) =>
-          card.id.toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.noResultsFound = false;
+      this.filteredCards = this.cards.filter((card) => {
+        // Adjust these checks based on how your card data structure includes cashback and annual fee
+        const matchesSearchTerm = card.id
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase());
+        const meetsCashbackCriteria = card.Data.CBPercent >= this.minCashback;
+        const meetsAnnualFeeCriteria = card.Data.annualFee <= this.maxAnnualFee;
+        return (
+          matchesSearchTerm && meetsCashbackCriteria && meetsAnnualFeeCriteria
         );
-        if (this.filteredCards.length == 0) {
-          this.noResultsFound = true;
-        }
-      } else {
-        this.filteredCards = this.cards; // No search term means no filtering
+      });
+
+      if (this.filteredCards.length == 0) {
+        this.noResultsFound = true;
       }
     },
     updateSearch(newSearchTerm) {
       this.searchTerm = newSearchTerm;
+      this.filterCards();
+    },
+    updateFilter({ minCashback, maxAnnualFee }) {
+      this.minCashback = minCashback;
+      this.maxAnnualFee = maxAnnualFee;
       this.filterCards();
     },
   },

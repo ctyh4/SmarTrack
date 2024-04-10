@@ -1,7 +1,10 @@
 <template>
   <sidebar></sidebar>
+  <div>
+    <FilterCard @update-filter="handleFilterUpdate" />
+  </div>
 
-  <div class="discoverypage">
+  <div class="discoverypage" v-if="user">
     <SearchBar @search="handleSearch" /><br />
     <CardGrid ref="cardGrid" /><br />
     <Logout />
@@ -12,7 +15,7 @@
 import Sidebar from "@/components/Sidebar.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import SearchBar from "@/components//SearchBar.vue";
-//import CardItem from "@/components/CardItem.vue";
+import FilterCard from "@/components/FilterCard.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import Logout from "@/components/Logout.vue";
@@ -22,6 +25,7 @@ const db = getFirestore(firebaseApp);
 export default {
   name: "DiscoveryPage",
   components: {
+    FilterCard,
     SearchBar,
     CardGrid,
     Logout,
@@ -43,6 +47,10 @@ export default {
   methods: {
     handleSearch(searchTerm) {
       this.$refs.cardGrid.updateSearch(searchTerm);
+    },
+    handleFilterUpdate({ minCashback, maxAnnualFee }) {
+      console.log("handling filter update");
+      this.$refs.cardGrid.updateFilter({ minCashback, maxAnnualFee });
     },
   },
 };

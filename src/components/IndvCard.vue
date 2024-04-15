@@ -23,7 +23,8 @@
 
 <script>
 import SmarTrack from "@/assets/SmarTrack.png";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 const db = getFirestore();
 
   export default {
@@ -36,6 +37,7 @@ const db = getFirestore();
     },
     data() {
       return {
+        user: false,
         imageUrl: SmarTrack,
         description: "",
         type: "",
@@ -44,6 +46,12 @@ const db = getFirestore();
     },
     mounted() { // Set the details when the component is created
       this.fetchCardDetails(this.cardId);
+      const auth = getAuth();
+        onAuthStateChanged (auth, user => {  
+            if (user) {
+                this.user = user;
+            }
+        })
     },
     methods: {
       async fetchCardDetails(cardId) {
@@ -72,21 +80,62 @@ const db = getFirestore();
             console.error("Error fetching user data:", error);
         }
       },
-      async addCard(user) {
-        const userDocRef = doc(getFirestore(), "Users", String(this.user.email));
-        await updateDoc(userDocRef, {
-          Inventory: push({
-            card: this.cardId,
-          }),
-        });
+      async likeCard() {
+        try {
+          // Get the user's document reference based on their email (assuming this.user.email is the user's email)
+          const userEmail = String(this.user.email);
+          const userDocRef = doc(db, "Users", userEmail);
+          console.log(userDocRef)
+          const userDocSnap = await getDoc(userDocRef);
+
+          // Check if the card ID is already in the Liked array
+          const likedCards = userDocSnap.data().Liked;
+          console.log(likedCards)
+          if (likedCards.includes(this.cardId)) {
+            console.log("Card already liked!");
+            return; // Exit the method if the card is already liked
+          }
+
+          // Update the Liked array by adding the card ID
+          await updateDoc(userDocRef, {
+            Liked: arrayUnion(this.cardId)
+          });
+
+          // Log success or perform any other actions
+          console.log("Card liked successfully!");
+        } catch (error) {
+          // Handle errors
+          console.error("Error liking card:", error);
+        }
       },
-      async addCard(user) {
-        const userDocRef = doc(getFirestore(), "Users", String(this.user.email));
-        await updateDoc(userDocRef, {
-          Inventory: push({
-            card: this.cardId,
-          }),
-        });
+
+      async addCard() {
+        try {
+          // Get the user's document reference based on their email (assuming this.user.email is the user's email)
+          const userEmail = String(this.user.email);
+          const userDocRef = doc(db, "Users", userEmail);
+          console.log(userDocRef)
+          const userDocSnap = await getDoc(userDocRef);
+
+          // Check if the card ID is already in the Inventory array
+          const addedCards = userDocSnap.data().Inventory;
+          console.log(addedCards)
+          if (addedCards.includes(this.cardId)) {
+            console.log("Card already added!");
+            return; // Exit the method if the card is already added
+          }
+
+          // Update the Inventory array by adding the card ID
+          await updateDoc(userDocRef, {
+            Inventory: arrayUnion(this.cardId)
+          });
+
+          // Log success or perform any other actions
+          console.log("Card added successfully!");
+        } catch (error) {
+          // Handle errors
+          console.error("Error adding card:", error);
+        }
       },
 
     },

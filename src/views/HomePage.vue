@@ -48,7 +48,9 @@ export default {
         setDoc(doc(db, "Users", String(user.email)), {
         Name: user.displayName,
         Email: user.email,
-        UID: user.uid
+        UID: user.uid,
+        Liked: [],
+        Inventory: [],
       })
       .then(() => {
         console.log("User data stored in Firestore successfully");

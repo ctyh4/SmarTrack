@@ -3,8 +3,10 @@
 
         <div class="cardinfo">
             <div class="cardtitle">
-                <h1 id="title"><img id = "cardphoto" src = "./../assets/DBS Visa Debit Card.webp"> Card Title {{  }}</h1>
-                <p> Card details {{  }}</p>
+                <h1 id="title"><img id = "cardphoto" :src = "imageUrl">{{ this.cardId }}</h1>
+                <p> Description: {{ description }}</p>
+                <p> Type: {{ type }}</p>
+                <p v-for="item in data" :key="item"> {{ item }}</p>
             </div>
             
             <div class="bottom-button-container">
@@ -20,7 +22,10 @@
 </template>
 
 <script>
+import SmarTrack from "@/assets/SmarTrack.png";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+const db = getFirestore();
+
   export default {
     name: "IndividualCard",
     props: {
@@ -31,27 +36,59 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
     },
     data() {
       return {
-        card: null,
+        imageUrl: SmarTrack,
+        description: "",
+        type: "",
+        data: {}
       };
     },
-    async mounted() {
-      const db = getFirestore();
-      const cardDoc = doc(db, "Cards", this.cardId);
-      const cardSnap = await getDoc(cardDoc);
-      if (cardSnap.exists()) {
-        this.card = cardSnap.data();
-      } else {
-        console.log("No such card!");
-      }
+    mounted() { // Set the details when the component is created
+      this.fetchCardDetails(this.cardId);
     },
     methods: {
-      addCard() {
-        // Add card logic here
+      async fetchCardDetails(cardId) {
+        try {
+          if (!this.cardId) {
+            console.error("Card ID is undefined");
+            return;
+          }
+          const docRef = doc(db, "Cards", cardId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const cardData = docSnap.data();
+            const data = cardData.Data;
+            const description = cardData.Description;
+            const type = cardData.Type;
+            this.imageUrl = await import(`@/assets/${this.cardId}.webp`);
+            console.log(this.cardId); // Output for debugging
+            // Update component data properties here if needed
+            this.data = data;
+            this.description = description;
+            this.type = type;
+          } else {
+              console.log("No such document!");
+          }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
       },
-      likeCard() {
-        // Add card logic here
+      async addCard(user) {
+        const userDocRef = doc(getFirestore(), "Users", String(this.user.email));
+        await updateDoc(userDocRef, {
+          Inventory: push({
+            card: this.cardId,
+          }),
+        });
       },
-      
+      async addCard(user) {
+        const userDocRef = doc(getFirestore(), "Users", String(this.user.email));
+        await updateDoc(userDocRef, {
+          Inventory: push({
+            card: this.cardId,
+          }),
+        });
+      },
+
     },
   };
 </script>

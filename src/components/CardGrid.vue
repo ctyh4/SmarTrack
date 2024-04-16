@@ -41,7 +41,7 @@ export default {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Done fetching cards " + this.filteredCards.length);
+        // console.log("Done fetching cards " + this.filteredCards.length);
       } catch (error) {
         console.error("Error fetching cards:", error);
       }

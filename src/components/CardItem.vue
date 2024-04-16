@@ -34,7 +34,10 @@ export default {
     learnMore(cardId) {
       // Implement functionality for when 'Learn More' is clicked.
       // For example, you could emit an event or route to a detailed view.
-      this.$router.push({ name: 'Indv Card', params: { cardId: this.card.id } });
+      this.$router.push({
+        name: "Indv Card",
+        params: { cardId: cardId },
+      });
     },
     async setImageUrl(cardId) {
       try {

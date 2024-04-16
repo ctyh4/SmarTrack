@@ -7,6 +7,7 @@ import NotFound from "@/views/NotFoundPage.vue";
 import IndvCard from "@/views/IndvCardPage.vue";
 import Discovery from "@/views/DiscoveryView.vue";
 import CompareCard from "@/views/CompareCardsPage.vue";
+import PaymentPage from "@/views/PaymentPage.vue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: "/Discovery",
     name: "Discovery",
     component: Discovery,
+  },
+  {
+    path: "/Payment",
+    name: "Payment",
+    component: PaymentPage,
   },
 ];
 

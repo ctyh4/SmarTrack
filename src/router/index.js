@@ -31,7 +31,7 @@ const routes = [
     component: Edit,
   },
   {
-    path: "/indvcard",
+    path: "/card/:cardId",
     name: "Indv Card",
     component: IndvCard,
   },

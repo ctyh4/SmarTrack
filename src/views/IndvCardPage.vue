@@ -3,7 +3,7 @@
         <div class="main-container">
             <BackButton/>
             <HomeButton/>
-            <IndvCard/>
+            <IndvCard :cardId="cardId"/>
         </div>
         <div class="compare-container">
             <button id="comparebutton" @click="compareCard()">Compare Cards</button>
@@ -22,6 +22,16 @@ export default {
         BackButton,
         HomeButton, 
         IndvCard
+    },
+    
+    data() {
+      return {
+        cardId: "",
+      };
+    },
+
+    created() {
+        this.cardId = this.$route.params.cardId;
     },
 
     methods: {

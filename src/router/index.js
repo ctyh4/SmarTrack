@@ -8,6 +8,7 @@ import CardsPage from "@/views/CardsPage.vue";
 import IndvCard from "@/views/IndvCardPage.vue";
 import Discovery from "@/views/DiscoveryView.vue";
 import CompareCard from "@/views/CompareCardsPage.vue";
+import PaymentPage from "@/views/PaymentPage.vue";
 
 const routes = [
   {
@@ -31,7 +32,7 @@ const routes = [
     component: Edit,
   },
   {
-    path: "/indvcard",
+    path: "/card/:cardId",
     name: "Indv Card",
     component: IndvCard,
   },
@@ -49,6 +50,11 @@ const routes = [
     path: "/cards",
     name: "Cards",
     component: CardsPage,
+  },
+  {
+    path: "/Payment",
+    name: "Payment",
+    component: PaymentPage,
   },
 ];
 

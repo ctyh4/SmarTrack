@@ -30,6 +30,7 @@
   import { getAuth, onAuthStateChanged } from "firebase/auth";
   
   export default {
+    name: "Sidebar",
     data() {
       return {
         isActive: false,

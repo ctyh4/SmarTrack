@@ -1,5 +1,5 @@
 <template>
-  <div class="filter-section">
+  <div class="filter-section" v-if="user">
     <div class="filter-header">
       <h2>Filter</h2>
       <button class="clear-btn" @click="clearFilters">Clear All</button>
@@ -46,9 +46,19 @@
 </template>
 
 <script>
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 export default {
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.user = user;
+      }
+    });
+  },
   data() {
     return {
+      user: false,
       minCashback: 0,
       maxAnnualFee: 1000,
     };

@@ -1,25 +1,30 @@
 <template>
     <BackButton/>
     <HomeButton/>
-    <!--- <div class="pagetitle"><h1>Compare Cards</h1></div> --->
-    <div class="compare-cards-container">
-        <div class="card-column"> 
-            <label for="card1">Select Card 1:</label>
-            <select v-model="selectedCard1" @change="fetchCardDetails(card1)" id="card1">
-                <option value="">Select a Card</option>
-                <option v-for="card in availableCards" :key="card.id" :value="card.id">{{ card.id }}</option>
-            </select>
-            <IndvCard :cardId="card1" />
-        </div><!---IndvCard: card-data="card1" class="card-column"--->
-        <div class="card-column">
-            <label for="card2">Select Card 2:</label>
-            <select v-model="selectedCard1" @change="fetchCardDetails(card2)" id="card2">
-                <option value="">Select a Card</option>
-                <option v-for="card in availableCards" :key="card.id" :value="card.id">{{ card.id }}</option>
-            </select>
-            <IndvCard :cardId="card2" />
+    <div class="page">
+        <div class="page-title">
+            <h1>Compare Cards</h1>
+        </div>
+        <div class="compare-cards-container">
+            <div class="card-column"> 
+                <label for="card1">Select Card 1:</label>
+                <select v-model="card1" @change="fetchCardDetails1(card1)" id="card1">
+                    <option value="">Select a Card</option>
+                    <option v-for="card in availableCards" :key="card.id" :value="card.id">{{ card.id }}</option>
+                </select>
+                <IndvCard v-if="card1" :cardId="card1" />
+            </div><!---IndvCard: card-data="card1" class="card-column"--->
+            <div class="card-column">
+                <label for="card2">Select Card 2:</label>
+                <select v-model="card2" @change="fetchCardDetails2(card2)" id="card2">
+                    <option value="">Select a Card</option>
+                    <option v-for="card in availableCards" :key="card.id" :value="card.id">{{ card.id }}</option>
+                </select>
+                <IndvCard v-if="card2" :cardId="card2" />
+            </div>
         </div>
     </div>
+    
 </template>
 
 <script>
@@ -61,17 +66,30 @@ export default {
             console.error("Error fetching available cards:", error);
         }
     },
+    
+    fetchCardDetails1(card1) {
+        this.card1 = card1
+    },
+
+    fetchCardDetails2(card2) {
+        this.card2 = card2
+    }
   },
 };
 </script>
 
 <style scoped>
-.pagetitle {
-    height: 50px;
+.page {
+    width: 100%;
+}
+
+.page-title {
+    margin-top: 60px;
+    font-size: 25px;
     text-align: center
 }
 .compare-cards-container {
-  margin-top: 100px;
+  margin-top: 70px;
   width: 100%;
   display: flex;
   justify-content: space-between;

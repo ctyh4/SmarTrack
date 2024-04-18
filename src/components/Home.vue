@@ -39,7 +39,7 @@
         </div>
   
         <div class="button">
-          <button @click="$router.push('/tracking')">
+          <button @click="$router.push('/transactions')">
             <img id = "icon" src = "./../assets/tracking_icon.png">
             Tracking & Analysis</button>
           <h3>Track your recent expenses, and 

@@ -57,7 +57,7 @@ const routes = [
     component: PaymentPage,
   },
   {
-    path: "/tracking",
+    path: "/transactions",
     name: "Tracking",
     component: Transaction,
   },

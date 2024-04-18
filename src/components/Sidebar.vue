@@ -9,7 +9,7 @@
         <a class = "page-router" @click="$router.push('/Cards')">Cards</a>
         <a class = "page-router" @click="$router.push('/Discovery')">Discovery</a>
         <a class = "page-router" @click="$router.push('/Payment')">Payment Recommendation</a>
-        <a class = "page-router" @click="$router.push('/Tracking')">Tracking & Analysis</a>
+        <a class = "page-router" @click="$router.push('/transactions')">Tracking & Analysis</a>
       </div>
       
       <div id="main" :class="{ 'pushMainContent': isActive }">

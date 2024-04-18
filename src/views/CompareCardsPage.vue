@@ -95,6 +95,11 @@ export default {
   justify-content: space-between;
 }
 
+label {
+    font-size: 15px;
+    font-weight: bold;
+}
+
 .card-column {
   width: 48%;
 }

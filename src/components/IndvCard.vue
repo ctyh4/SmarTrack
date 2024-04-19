@@ -140,6 +140,44 @@ export default {
         await updateDoc(userDocRef, {
           Inventory: arrayUnion(this.cardId),
         });
+        
+        //Checking if the card has a minspend. If so, add it to a dictionary, organized by month and year
+        const cardDocRef = doc(db, "Cards", this.cardId);
+        const cardDocSnap = await getDoc(cardDocRef);
+        const cardType = cardDocSnap.data().Type;
+        const data = cardDocSnap.data().Data; // Access the 'Data' dictionary
+        const minSpend = data.MinSpend; // Access the 'MinSpend' property within 'Data'
+        const target = data.Spend; //Min amount of money to spend before incurring costs
+        const cbLimit = data.CashbackLimit; //Limit to cashback received
+        const cbCap = data.CBCap;
+
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // Month starts from 0, so add 1
+
+        let newDictMS = userDocSnap.data().CardsWithMinSpend //Get the current dict in user
+        if (cardType == "CC" && minSpend == true) {
+          newDictMS[this.cardId] = {
+              [`${year}-${month}`]: { 'Target': target, 'Current': 0 } //Update the dict to include the new card, sorted by year and month
+          };
+        
+
+          await updateDoc(userDocRef, {
+              CardsWithMinSpend: newDictMS
+          });
+      }
+
+      let newDictCB = userDocSnap.data().CardsWithCBCap //Get the current dict in user for cards with cb cap
+        if (cardType == "CC" && cbCap == true) {
+          newDictCB[this.cardId] = {
+              [`${year}-${month}`]: { 'Limit': cbLimit, 'Current': 0 } //Update the dict to include the new card, sorted by year and month
+          };
+        
+
+          await updateDoc(userDocRef, {
+              CardsWithCBCap: newDictCB
+          });
+      }
 
         // Log success or perform any other actions
         console.log("Card added successfully!");

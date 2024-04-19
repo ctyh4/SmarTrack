@@ -53,7 +53,7 @@ export default {
         Inventory: [],
         CardsWithMinSpend: {},
         CardsWithCBCap: {},
-        Transactions: {}
+        Transactions: []
       })
       .then(() => {
         console.log("User data stored in Firestore successfully");

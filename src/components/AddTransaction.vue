@@ -1,18 +1,28 @@
 <template>
-  <div>
-    <button id="homebutton" type="button" @click="this.$router.push('/home')">
-      Home
-    </button>
-  </div>
+  <button id="ATbutton" type="button" @click="emitOpenModal">
+    Add Transaction
+  </button>
 </template>
 
+<script>
+export default {
+  name: "AddTransaction",
+  methods: {
+    emitOpenModal() {
+      // Emit an event that the parent can listen to open the modal
+      this.$emit("openModal");
+    },
+  },
+};
+</script>
+
 <style>
-#homebutton {
+#ATbutton {
   font-family: pjs;
   position: absolute;
   border: transparent;
   top: 15px;
-  right: 20px;
+  right: 100px;
   background-color: #7f56d9;
   color: white;
   padding: 5px 10px;

@@ -1,27 +1,36 @@
 <template>
   <div class="indvcard">
-    <div class="cardinfo">
       <div class="cardtitle">
         <h1 id="title">
-          <img id="cardphoto" :src="imageUrl" />{{ this.cardId }}
+          <img id="cardphoto" :src="imageUrl" /> {{ this.cardId }}
         </h1>
-        <p>Description: {{ description }}</p>
-        <p>Type: {{ type }}</p>
-        <p v-for="item in data" :key="item">{{ item }}</p>
       </div>
 
-      <div class="bottom-button-container">
-        <button id="likebutton" @click="likeCard()">
-          <img
-            id="icon"
-            src="./../assets/heart_icon.png"
-            style="width: 20px; height: 15px"
-          />Like</button
-        ><br /><br />
-        <button id="addbutton" @click="addCard()">Add Card</button><br /><br />
+      <div class="card-desc">
+        <h3>Description: </h3>
+        <p>{{ description }}</p><hr>
       </div>
-    </div>
+
+      <div class="card-type">
+        <h3>Type: </h3>
+        <p>{{ type }}</p><hr>
+      </div>
+        
+      <div class="card-details" v-for="(value, newKey) in data" :key="newKey"> 
+        <h3>{{ newKey }}:</h3>
+        <p>{{ value }}</p><hr>
+      </div>        
   </div>
+
+    <div class="bottom-button-container">
+      <button id="likebutton" @click="likeCard()">
+        <img
+          id="icon"
+          src="./../assets/heart_icon.png"
+          style="width: 20px; height: 15px"
+        />Like</button><br /><br />
+      <button id="addbutton" @click="addCard()">Add Card</button><br /><br />
+    </div>
 </template>
 
 <script>
@@ -63,6 +72,16 @@ export default {
       }
     });
   },
+  watch: {
+    cardId: {
+      immediate: true,
+      handler(newCardId) {
+        if (newCardId) {
+          this.fetchCardDetails(newCardId);
+        }
+      },
+    },
+  },
   methods: {
     async fetchCardDetails(cardId) {
       try {
@@ -84,6 +103,7 @@ export default {
           this.data = data;
           this.description = description;
           this.type = type;
+          this.mapKeys();
         } else {
           console.log("No such document!");
         }
@@ -186,6 +206,27 @@ export default {
         console.error("Error adding card:", error);
       }
     },
+    mapKeys() {
+      const keyMapping = {
+        CBCap: "Cash Back Cap",
+        CBPercent: "Cash Back %",
+        Spend: "Spend",
+        RebatePercent: "Rebate %",
+        CashbackLimit: "Cash Back Limit",
+        MinSpend: "Minimum Spend",
+        annualFee: "Annual Fee"
+      };
+
+      // Map keys in all dictionaries
+      const mappedData = {};
+      for (const oldKey in this.data) {
+        const newKey = keyMapping[oldKey];
+        if (newKey) {
+          mappedData[newKey] = this.data[oldKey];
+        }
+      }
+      this.data = mappedData;
+    }
   },
 };
 </script>
@@ -197,13 +238,17 @@ export default {
   justify-content: center;
   display: flex;
   flex-direction: column;
-  margin: auto;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 30px;
+}
+
+.card-desc {
+  width: 75%;
 }
 
 #cardphoto {
-  width: 35px;
+  width: 100px;
   height: auto;
 }
 
@@ -239,6 +284,6 @@ button:hover {
   align-items: center;
   justify-content: center;
   display: block;
-  margin: auto;
+  margin-top: 30px;
 }
 </style>

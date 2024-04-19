@@ -37,8 +37,10 @@ export default {
 
 <style>
 #btn{
+  font-family: pjs;
   text-align: center;
   margin: auto;
+  padding: 5px 10px;
 }
 </style>
 

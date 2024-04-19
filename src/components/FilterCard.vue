@@ -135,7 +135,6 @@ export default {
 }
 
 .filter-group input[type="range"] {
-  -webkit-appearance: none;
   width: 100%;
   height: 8px;
   border-radius: 5px;

@@ -2,14 +2,24 @@
   <Sidebar />
   <HomeButton />
   <div v-if="user">
+    <div>
+      <router-link to="/tracking/analysis">Analysis</router-link> |
+      <router-link to="/tracking/transactions">Transactions</router-link> |
+      <router-link to="/tracking/budget">Budget</router-link>
+    </div>
     <div class="trackingpage">
       <h1>Transactions Page</h1>
       <br />
     </div>
     <div>
-      <router-link to="/tracking/analysis">Analysis</router-link> |
-      <router-link to="/tracking/transactions">Transactions</router-link> |
-      <router-link to="/tracking/budget">Budget</router-link>
+      <TransactionTable ref="transactionTable" />
+      <AddTransaction @openModal="toggleModal" />
+      <TransactionModal
+        v-if="isModalOpen"
+        @closeModal="toggleModal"
+        @transaction-added="closeModalAndRefresh"
+        :isModalOpen="isModalOpen"
+      />
     </div>
   </div>
 </template>
@@ -17,7 +27,9 @@
 <script>
 import HomeButton from "@/components/HomeButton.vue";
 import Sidebar from "@/components/Sidebar.vue";
-import Transactions from "@/components/Transactions.vue";
+import TransactionTable from "@/components/TransactionTable.vue";
+import AddTransaction from "@/components/AddTransaction.vue";
+import TransactionModal from "@/components/TransactionModal.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -28,11 +40,14 @@ export default {
   components: {
     HomeButton,
     Sidebar,
-    Transactions,
+    TransactionTable,
+    AddTransaction,
+    TransactionModal,
   },
   data() {
     return {
       user: false,
+      isModalOpen: false,
     };
   },
   mounted() {
@@ -42,6 +57,15 @@ export default {
         this.user = user;
       }
     });
+  },
+  methods: {
+    toggleModal() {
+      this.isModalOpen = !this.isModalOpen;
+    },
+    closeModalAndRefresh() {
+      this.isModalOpen = false; // Close the modal
+      this.$refs.transactionTable.fetchTransactions(this.user.email); // Refresh the transactions list
+    },
   },
 };
 </script>

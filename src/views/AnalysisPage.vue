@@ -2,14 +2,14 @@
   <Sidebar />
   <HomeButton />
   <div v-if="user">
-    <div class="trackingpage">
-      <h1>Analysis Page</h1>
-      <br />
-    </div>
     <div>
       <router-link to="/tracking/analysis">Analysis</router-link> |
       <router-link to="/tracking/transactions">Transactions</router-link> |
       <router-link to="/tracking/budget">Budget</router-link>
+    </div>
+    <div class="trackingpage">
+      <h1>Analysis Page</h1>
+      <br />
     </div>
   </div>
 </template>
@@ -17,7 +17,6 @@
 <script>
 import HomeButton from "@/components/HomeButton.vue";
 import Sidebar from "@/components/Sidebar.vue";
-import Transactions from "@/components/Transactions.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -28,7 +27,6 @@ export default {
   components: {
     HomeButton,
     Sidebar,
-    Transactions,
   },
   data() {
     return {

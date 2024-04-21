@@ -12,11 +12,11 @@
       </thead>
       <tbody>
         <tr v-for="transaction in transactions" :key="transaction.id">
-          <td>{{ formatCurrency(transaction.Amount) }}</td>
-          <td>{{ transaction.Category }}</td>
-          <td>{{ transaction.Recipient }}</td>
-          <td>{{ transaction.PaymentMethod }}</td>
-          <td>{{ formatDate(transaction.Date) }}</td>
+          <td>{{ formatCurrency(transaction.amount) }}</td>
+          <td>{{ transaction.category }}</td>
+          <td>{{ transaction.recipient }}</td>
+          <td>{{ transaction.card }}</td>
+          <td>{{ formatDate(transaction.timestamp) }}</td>
         </tr>
       </tbody>
     </table>
@@ -25,13 +25,7 @@
 
 <script>
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  query,
-  getDocs,
-  orderBy,
-} from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import firebaseApp from "../firebase.js";
 
 const db = getFirestore(firebaseApp);
@@ -45,13 +39,24 @@ export default {
   },
   methods: {
     async fetchTransactions(email) {
-      const transactionsRef = collection(db, "Users", email, "transactions");
-      const q = query(transactionsRef, orderBy("Date", "desc"));
-      const querySnapshot = await getDocs(q);
-      this.transactions = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const userDocRef = doc(db, "Users", email);
+      try {
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          this.transactions = userData.Transactions || [];
+          // Sorting the transactions by timestamp in descending order
+          this.transactions.sort((a, b) =>
+            b.timestamp > a.timestamp ? 1 : -1
+          );
+        } else {
+          console.log("No such document!");
+          this.transactions = [];
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+        this.transactions = [];
+      }
     },
     formatDate(firestoreTimestamp) {
       // Check if the timestamp is an instance of Firestore Timestamp

@@ -18,29 +18,44 @@
           <label for="category">Category:</label>
           <select id="category" v-model="newTransaction.Category" required>
             <option value="">Select a category</option>
-            <option value="Food">Food</option>
-            <option value="Retail">Retail</option>
-            <option value="Utilities">Utilities</option>
-            <!-- Add other categories as needed -->
+            <option
+              v-for="category in categories"
+              :key="category"
+              :value="category"
+            >
+              {{ category }}
+            </option>
           </select>
         </div>
         <div>
           <label for="recipient">Recipient:</label>
-          <input
-            type="text"
-            id="recipient"
+          <select
+            id="selectRecipient"
             v-model="newTransaction.Recipient"
             required
-          />
+          >
+            <option value="">Select a Recipient</option>
+            <option
+              v-for="recipient in recipients"
+              :key="recipient"
+              :value="recipient"
+            >
+              {{ recipient }}
+            </option>
+          </select>
         </div>
         <div>
-          <label for="paymentMethod">Payment Method:</label>
-          <input
-            type="text"
-            id="paymentMethod"
+          <label for="paymentMethod">Card:</label>
+          <select
+            id="selectCard"
             v-model="newTransaction.PaymentMethod"
             required
-          />
+          >
+            <option value="">Select a Card</option>
+            <option v-for="card in cards" :key="card" :value="card">
+              {{ card }}
+            </option>
+          </select>
         </div>
         <div>
           <label for="date">Date:</label>
@@ -58,7 +73,15 @@
 </template>
 
 <script>
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import firebaseApp from "../firebase.js";
 
@@ -71,6 +94,9 @@ export default {
   },
   data() {
     return {
+      categories: [],
+      recipients: [],
+      cards: [],
       newTransaction: {
         Amount: null,
         Category: "",
@@ -78,9 +104,13 @@ export default {
         PaymentMethod: "",
         Date: "",
       },
+      user: null,
     };
   },
   mounted() {
+    this.getRecipients();
+    this.getCategories();
+    this.getCards();
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -89,6 +119,48 @@ export default {
     });
   },
   methods: {
+    async getRecipients() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Companies"));
+        console.log(querySnapshot);
+        querySnapshot.forEach((doc) => {
+          // Push each recipient to the recipients array
+          this.recipients.push(doc.id);
+        });
+      } catch (error) {
+        console.error("Error getting recipients: ", error);
+      }
+    },
+    async getCategories() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Categories"));
+        console.log(querySnapshot);
+        querySnapshot.forEach((doc) => {
+          // Push each recipient to the recipients array
+          this.categories.push(doc.id);
+        });
+      } catch (error) {
+        console.error("Error getting categories: ", error);
+      }
+    },
+    async getCards() {
+      try {
+        const auth = getAuth();
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.user = user;
+            const userEmail = String(user.email);
+            const userDocRef = doc(db, "Users", userEmail);
+            //console.log(userDocRef);
+            const userDocSnap = await getDoc(userDocRef);
+            const addedCards = userDocSnap.data().Inventory;
+            this.cards = addedCards;
+          }
+        });
+      } catch (error) {
+        console.error("Error getting user document: ", error);
+      }
+    },
     async submitTransaction() {
       try {
         // Format the date to a Firestore timestamp if necessary
@@ -96,12 +168,21 @@ export default {
           this.newTransaction.Date
         );
 
+        const newTransaction = {
+          amount: this.newTransaction.Amount,
+          category: this.newTransaction.Category,
+          recipient: this.newTransaction.Recipient,
+          card: this.newTransaction.PaymentMethod,
+          timestamp: this.newTransaction.Date, // Use the Date object directly
+          // cardCB: cardCB, // Include card cashback calculation if necessary
+        };
+
         // Add the new transaction to Firestore under the current user's transactions collection
         const user = this.user; // Replace with your actual user state
-        await addDoc(
-          collection(db, "Users", user.email, "transactions"),
-          this.newTransaction
-        );
+        const userDocRef = doc(db, "Users", user.email);
+        await updateDoc(userDocRef, {
+          Transactions: arrayUnion(newTransaction),
+        });
 
         this.$emit("transaction-added");
 

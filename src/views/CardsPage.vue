@@ -31,24 +31,6 @@
         }
       })
     },
-    methods: {
-      change() {
-        this.refreshComp += 1;
-      },
-      storeFS(user) {
-        setDoc(doc(db, "Users", String(user.email)), {
-          Name: user.displayName,
-          Email: user.email,
-          UID: user.uid
-        })
-        .then(() => {
-          console.log("User data stored in Firestore successfully");
-        })
-        .catch(error => {
-          console.error("Error storing user data in Firestore:", error);
-        });
-      },
-    }
   };
   </script>
 

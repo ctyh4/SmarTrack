@@ -9,6 +9,7 @@ import IndvCard from "@/views/IndvCardPage.vue";
 import Discovery from "@/views/DiscoveryView.vue";
 import CompareCard from "@/views/CompareCardsPage.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
+import DiscoveryView from "@/views/DiscoveryView.vue";
 
 const routes = [
   {
@@ -55,6 +56,11 @@ const routes = [
     path: "/Payment",
     name: "Payment",
     component: PaymentPage,
+  },
+  {
+    path: "/Discovery",
+    name: "Discovery",
+    component: DiscoveryView,
   },
 ];
 

@@ -3,20 +3,16 @@
     <form class="myform">
       <h2>Add Card</h2>
 
-      <div class="formli">
-        <!-- <label for="cardType1">Card Type</label>
-          <select id="cardType1" v-model="selected">
-            <option value="" disabled selected>Select Card Type</option>
-            <option>Credit</option>
-            <option>Debit</option>
+        <label for="cardName1">Card Name</label>
+          <select id="cardName1" v-model="selected">
+            <option value="" disabled selected>Select Card Name</option>
+            <option>Citi Cash Back+ Mastercard</option>
+            <option>DBS Visa Debit Card</option>
+            <option>OCBC Debit Card</option>
+            <option>Standard Chartered Simply Cash Credit Card</option>
+            <option>UOB One Card</option>
           </select> 
           <br><br>
-        
-        <label for="issuer1">Issuer</label>
-        <input type="text" id="issuer1" required="" placeholder="Valid Issuer (eg.DBS)"> <br><br> -->
-        <label for="cardName1">Card Name</label>
-        <input type="text" id="cardName1" v-model="cardName1" required="" placeholder="Enter Card Name"><br><br>
-      </div>
 
       <div class="confirm">
         <button id = "confirm-button" type = "button" v-on:click="confirm">Confirm</button>
@@ -27,8 +23,7 @@
 
 <script>
 import firebaseApp from '../firebase.js';
-import { getFirestore } from 'firebase/firestore';
-import{ doc, setDoc } from 'firebase/firestore';
+import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 const db = getFirestore(firebaseApp);
 
 export default {
@@ -39,41 +34,33 @@ export default {
   },
   props: {
     isVisible: Boolean,
+    userEmail: String,
   },
   methods: {
     async confirm() {
-      const Card = this.cardName1; 
-      alert("Confirming your data for card: " + Card);
+      let Card = document.getElementById("cardName1").value
 
-      try {
-        const docRef = await setDoc(doc(db, "Portfolio", Card), {
-          Card_Name: Card,
-        });
-        console.log("Document written with ID: ", docRef.id);
-        this.$emit("confirmed", Card);
-        this.cardName1 = ''; // Reset input after emitting event
-      }
-      // console.log("Confirmed")
+      if (!Card) {
+        alert("Please select a card name.");
+        return;
+      } try {
+        const userDocRef = doc(db, "Users", this.userEmail);
+        // console.log(userDocRef);
 
-      // // let cardtype = document.getElementById("cardType1").value
-      // // let issuer = document.getElementById("issuer1").value
-      // let Card = document.getElementById("cardName1").value
-
-      // alert("Confirming your data for card: " + Card)
-
-      // try {
-      //   const docRef = await setDoc(doc(db, "Card"), {
-      //     // Card_Type: cardType1, Issuer: issuer1, 
-      //     Card_Name: Card,
-      //   })
-      //   console.log(docRef)
-      //   document.getElementById('myform').reset();
-      //   this.$emit("Confirmed")
-      // }
-      catch(error) {
+        const docSnap = await getDoc(userDocRef);
+        // if (docSnap.exists()) {
+          await updateDoc(userDocRef, {
+            Inventory: arrayUnion(Card),
+          })
+          alert("Confirming your data for card: " + Card)
+          Card = '';  //Reset selected value
+          this.$emit("confirmed", Card);
+          this.$router.push("/cards");
+        // }
+      } catch(error) {
         console.error("Error adding card: ", error);
       }
-    }
+    },
   }
 };
 </script>

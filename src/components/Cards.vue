@@ -1,7 +1,10 @@
 <template>
-  <Sidebar @toggle="handleSidebarToggle" />
-    <div class="cards-page">
-
+  <!-- <sidebar></sidebar>  -->
+  <div>
+    <FilterCard @update-filter="handleFilterUpdate" /> 
+  </div>
+    <div class="cards-page" v-if="user">
+      <SearchBar @search="handleSearch" /><br />
         <div class="top-nav">
             <button id="home-button" type="button" @click="$router.push('/home')">Home</button>
             <button id="filter-button" type="button">Filters</button>
@@ -9,7 +12,7 @@
               <input id = "search-bar" type="text" placeholder="Search here">
             </div> -->
             <button id="add-card-button" type="button" @click="showAddCardForm = true">Add Card</button>
-            <AddCardForm :isVisible="showAddCardForm" @confirmed="addCard" />
+            <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
         </div>
 
         <div class="filter-bar">
@@ -26,12 +29,16 @@
 
 <script>
 import Sidebar from '@/components/Sidebar.vue';
+import SearchBar from "@/components//SearchBar.vue";
+import FilterCard from "@/components/FilterCard.vue";
 import AddCardForm from './AddCardForm.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   components: {
     Sidebar,
+    FilterCard,
+    SearchBar,
     AddCardForm,
   },
   data() {
@@ -44,9 +51,10 @@ export default {
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged(auth, user => {
-      if (user){
+    onAuthStateChanged (auth, user => {  
+      if (user) {
         this.user = user;
+        this.fetchData(user);
       }
     })
   },
@@ -54,9 +62,37 @@ export default {
     handleSidebarToggle(isActive) {
       this.sidebarActive = isActive;
     },
+    async fetchData(user) {
+      try {
+        const userEmail = String(user.email);
+        console.log(userEmail);
+
+        const docRef = doc(db, "Users", userEmail);
+        console.log(docRef);
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          const name = userData.Name;
+          console.log(userData); 
+          this.displayName = name;
+                    
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    },
     addCard(cardName) {
-      this.cards.push({ name: cardName });
-      this.showAddCardForm = false;
+      if (this.user && cardName) {
+        // Push the card to the local cards array which will update the display
+        this.cards.push({ name: cardName });
+
+        // Close the AddCardForm
+        this.showAddCardForm = false;
+      }
     },
   },
 }

@@ -11,11 +11,17 @@
       <h1>Budget Page</h1>
       <br />
     </div>
+    <div>
+      <SpendingPie />
+      <BudgetForm />
+    </div>
   </div>
 </template>
 
 <script>
 import HomeButton from "@/components/HomeButton.vue";
+import SpendingPie from "@/components/SpendingPie.vue";
+import BudgetForm from "@/components/BudgetForm.vue";
 import Sidebar from "@/components/Sidebar.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
@@ -27,6 +33,8 @@ export default {
   components: {
     HomeButton,
     Sidebar,
+    BudgetForm,
+    SpendingPie,
   },
   data() {
     return {
@@ -44,7 +52,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .profilepage {
   margin-top: 30px;
   margin-left: auto;

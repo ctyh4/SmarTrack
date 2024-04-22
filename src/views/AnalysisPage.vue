@@ -1,14 +1,16 @@
 <template v-if="user">
   <Sidebar />
   <HomeButton />
-  <div v-if="user">
+  <div class="container" v-if="user">
     <div>
       <router-link to="/tracking/analysis">Analysis</router-link> |
       <router-link to="/tracking/transactions">Transactions</router-link> |
       <router-link to="/tracking/budget">Budget</router-link>
     </div>
-    <div class="trackingpage">
       <h1>Analysis Page</h1>
+    <div class="trackingpage">
+      <Bargraph /><br>
+      <Linechart />
       <br />
     </div>
   </div>
@@ -17,6 +19,8 @@
 <script>
 import HomeButton from "@/components/HomeButton.vue";
 import Sidebar from "@/components/Sidebar.vue";
+import Bargraph from "@/components/Bargraph.vue";
+import Linechart from "@/components/Linechart.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -27,6 +31,8 @@ export default {
   components: {
     HomeButton,
     Sidebar,
+    Bargraph,
+    Linechart
   },
   data() {
     return {
@@ -45,8 +51,9 @@ export default {
 </script>
 
 <style>
-.profilepage {
+.container {
   margin-top: 30px;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
 }

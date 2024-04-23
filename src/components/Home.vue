@@ -1,14 +1,15 @@
 <template>
   <!-- <div v-if="user"> -->
   <sidebar @toggle="handleSidebarToggle" />
-    <div class="home-page" :class="{ 'pushMainContent': sidebarActive }">
+  <div class="home-page" :class="{ 'pushMainContent': sidebarActive }">
+  <div class="home-page">
     <div id="home-container">
-        <h1>Welcome back!</h1>
-        <h2>What would you like to do today?</h2>
+      <h1>Welcome back!</h1>
+      <h2>What would you like to do today?</h2>
     </div>
 
-    <div class = "button-container">
-        <div class="button">
+    <div class="button-container">
+      <div class="button">
         <button @click="$router.push('/profile')">
             <img id = "icon" src = "./../assets/profile_icon.png">Profile</button>
         <h3>Customise your personal details, preferences and settings.</h3>
@@ -43,26 +44,26 @@
         </div>
     </div>
     </div>
-  <!-- </div> -->
+  </div>
 </template>
-  
+
 <script>
-import Sidebar from '@/components/Sidebar.vue';
+import Sidebar from "@/components/Sidebar.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   data() {
     return {
-      user:false,
-    }
+      user: false,
+    };
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged(auth,(user)=> {
-      if (user){
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
         this.user = user;
       }
-    })
+    });
   },
   components: {
     'sidebar' : Sidebar,
@@ -119,8 +120,37 @@ export default {
     
   }
 
-  .home-container {
-    /* flex-direction: row;
+h2 {
+  font-family: pjs;
+  font-size: 15px;
+}
+
+h3 {
+  font-family: pjs;
+  font-size: 13px;
+  width: 290px;
+  align-items: center;
+}
+
+img {
+  width: 25%;
+  height: 25%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 25px;
+}
+
+.home-page {
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-container {
+  /* flex-direction: row;
     flex-wrap: wrap; */
     justify-content: center;
     align-items: flex-start;
@@ -176,4 +206,3 @@ export default {
   margin-left: 250px; /* Match this with the sidebar's width */
 }
 </style>
-  

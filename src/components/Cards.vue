@@ -15,13 +15,10 @@
             <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
         </div>
 
-        <div class="filter-bar">
-            
-        </div>
-
         <div class="inventory">
-          <div class="card" v-for="card in cards" :key="card.id">
-            {{ card.name }}
+          <!-- <CardsInventory/> -->
+          <div v-for="cardName in cards" :key="cardName" class="card">
+            <h3>{{ cardName }}</h3>
           </div>
         </div>
     </div>
@@ -32,7 +29,11 @@ import Sidebar from '@/components/Sidebar.vue';
 import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
 import AddCardForm from './AddCardForm.vue';
+import CardsInventory from './CardsInventory.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import firebaseApp from '../firebase.js';
+import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+const db = getFirestore(firebaseApp);
 
 export default {
   components: {
@@ -40,6 +41,7 @@ export default {
     FilterCard,
     SearchBar,
     AddCardForm,
+    CardsInventory,
   },
   data() {
     return {
@@ -62,7 +64,7 @@ export default {
     handleSidebarToggle(isActive) {
       this.sidebarActive = isActive;
     },
-    async fetchData(user) {
+    async fetchCards(user) {
       try {
         const userEmail = String(user.email);
         console.log(userEmail);
@@ -72,45 +74,44 @@ export default {
 
         const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
+        if (docSnap.exists() && docSnap.data().Inventory) {
           const userData = docSnap.data();
-          const name = userData.Name;
-          console.log(userData); 
-          this.displayName = name;
-                    
+          this.cards = userData.Inventory;
+          console.log(this.cards); 
         } else {
-          console.log("No such document!");
+          console.log("No inventory found or no such document!");
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user cards:", error);
       }
     },
-    addCard(cardName) {
-      if (this.user && cardName) {
-        // Push the card to the local cards array which will update the display
-        this.cards.push({ name: cardName });
-
-        // Close the AddCardForm
-        this.showAddCardForm = false;
-      }
+    async addCard(cardName) {
+      try {
+        const userDocRef = doc(db, "Users", String(user.email));
+        await updateDoc(userDocRef, {
+          Inventory: arrayUnion(cardName),
+        });
+        this.cards.push(cardName);
+        console.log(this.cards);
+        this.showAddCardForm = false; //Close Add Card Form
+        this.$router.push("/cards");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      } 
+    },
+    watch: {
+    // When the user logs in, fetch their card inventory
+      user: {
+        immediate: true,
+        handler(newUser) {
+          if (newUser) {
+            this.fetchCards(newUser);
+          }
+        }
+      },
     },
   },
 }
-
-// function search() {
-//   let input = document.getElementById('search-bar').value
-//   input = input.toLowerCase();
-//   let x = document.getElementsByClassName('cards');
- 
-//   for (i = 0; i < x.length; i++) {
-//     if (!x[i].innerHTML.toLowerCase().includes(input)) {
-//       x[i].style.display = "none";
-//     }
-//     else {
-//       x[i].style.display = "list-item";
-//     }
-//   }
-// }
 </script>
 
 <style scoped>

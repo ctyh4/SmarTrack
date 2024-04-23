@@ -16,6 +16,7 @@
 
       <div class="confirm">
         <button id = "confirm-button" type = "button" v-on:click="confirm">Confirm</button>
+        <!-- <button id="cancelButton" type="button" @click="cancel()">Cancel</button> -->
       </div>
     </form>
   </div>
@@ -23,12 +24,14 @@
 
 <script>
 import firebaseApp from '../firebase.js';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 const db = getFirestore(firebaseApp);
 
 export default {
   data() {
     return {
+      user: null,
       cardName1: '',
     };
   },
@@ -36,6 +39,15 @@ export default {
     isVisible: Boolean,
     userEmail: String,
   },
+  mounted() {
+        const auth = getAuth();
+        onAuthStateChanged (auth, user => {  
+            if (user) {
+                this.user = user;
+                this.fetchData(user);
+            }
+        })
+    },
   methods: {
     async confirm() {
       let Card = document.getElementById("cardName1").value
@@ -61,6 +73,9 @@ export default {
         console.error("Error adding card: ", error);
       }
     },
+    // async cancel() {
+    //   this.$router.push("/cards");
+    // },
   }
 };
 </script>

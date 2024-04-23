@@ -11,6 +11,11 @@ import CompareCard from "@/views/CompareCardsPage.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import DiscoveryView from "@/views/DiscoveryView.vue";
 
+// import Tracking from "@/views/TrackingPage.vue";
+import AnalysisPage from "@/views/AnalysisPage.vue"; // Assuming you have a component for analysis
+import TransactionsPage from "@/views/TransactionsPage.vue"; // Your existing transactions component or a dedicated page
+import BudgetPage from "@/views/BudgetPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -61,6 +66,29 @@ const routes = [
     path: "/Discovery",
     name: "Discovery",
     component: DiscoveryView,
+  },
+  {
+    path: "/tracking",
+    redirect: "/tracking/analysis", // Redirect to analysis by default
+    name: "Tracking",
+    // component: Tracking,
+    children: [
+      {
+        path: "analysis",
+        name: "Analysis",
+        component: AnalysisPage,
+      },
+      {
+        path: "transactions",
+        name: "Transactions",
+        component: TransactionsPage,
+      },
+      {
+        path: "budget",
+        name: "Budget",
+        component: BudgetPage,
+      },
+    ],
   },
 ];
 

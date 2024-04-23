@@ -1,5 +1,5 @@
 <template>
-  <div class="search-container">
+  <div class="search-container" v-if="user">
     <input
       type="text"
       v-model="searchTerm"
@@ -12,11 +12,21 @@
 </template>
 
 <script>
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 export default {
   data() {
     return {
+      user: false,
       searchTerm: "",
     };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.user = user;
+      }
+    });
   },
   methods: {
     emitSearch() {

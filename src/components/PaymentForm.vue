@@ -22,16 +22,28 @@
         </select>
         </div>
 
+        <div class="form-group">
+        <label for="selectCard">Card:</label>
+        <select id="selectCard" v-model="card" required>
+          <option value="">Select a Card</option>
+          <option v-for="card in cards" :key="card" :value="card">{{ card }}</option>
+        </select>
+        </div>
+
         <button type="submit">Submit</button>
       </form>
     </div>
-  </template>
+    <div v-if="bestCardInfo && bestCB">
+      <h2 id="reco">The best card is {{ bestCardInfo }} with total cashback {{ bestCB }}</h2>
+    </div>
+      </template>
   
 <script>
     import firebaseApp from "../firebase.js";
-    import { getFirestore, getDocs, collection } from "firebase/firestore";
+    import { getFirestore, getDocs, collection, getDoc, doc, Timestamp, updateDoc, arrayUnion } from "firebase/firestore";
     const db = getFirestore(firebaseApp);
-
+    import { getAuth, onAuthStateChanged } from "firebase/auth";
+    
     export default {
         name: "PaymentForm",
         data() {
@@ -40,14 +52,25 @@
             recipients: [],
             recipient: '',
             categories: [],
-            category: ''
-
+            category: '' ,
+            user: false,
+            bestCardInfo: '',
+            bestCB: '',
+            card: '',
+            cards: []
         };
         },
         mounted() {
             // Retrieve recipients from Firestore when the component is mounted
             this.getRecipients();
             this.getCategories();
+            this.getCards();
+            const auth = getAuth();
+            onAuthStateChanged(auth,(user)=> {
+              if (user){
+                this.user = user;
+              }
+           })
         },
         methods: {
             async getRecipients() {
@@ -74,8 +97,218 @@
                     console.error('Error getting categories: ', error);
                 }
             },
-            findBestCard() {
-              console.log("Found best card")
+            async getCards() {
+              try {
+                  const auth = getAuth();
+                  onAuthStateChanged(auth, async (user) => {
+                      if (user) {
+                          this.user = user;
+                          const userEmail = String(user.email);
+                          const userDocRef = doc(db, "Users", userEmail);
+                          //console.log(userDocRef);
+                          const userDocSnap = await getDoc(userDocRef);
+                          const addedCards = userDocSnap.data().Inventory;
+                          this.cards = addedCards;
+                      }
+                  });
+              } catch (error) {
+                  console.error('Error getting user document: ', error);
+              }
+          },
+
+            async findBestCard() {
+              try{
+                console.log("Found best card")
+                // Check through each card
+                // give each card a number that represents the total cashback (including the company as well)
+                // if number>current best, replace best card with that
+                // if cb cap is true and cb cap has been met, disqualify
+                // if min spend has not been met, automatically throw into best card
+                // return best card
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth() + 1;
+                const date = `${year}-${month}`
+                console.log(this.user);
+
+                const userEmail = String(this.user.email);
+                console.log(userEmail)
+                const userDocRef = doc(db, "Users", userEmail);
+                console.log(userDocRef);
+                const userDocSnap = await getDoc(userDocRef);
+                const addedCards = userDocSnap.data().Inventory;
+                console.log(addedCards);
+
+                const companyDocRef = doc(db, "Companies", String(this.recipient));
+                const companyDocSnap = await getDoc(companyDocRef);
+                const companyCBCards = companyDocSnap.data().CB //Returns a dictionary of cards that are compatible with the company
+                console.log(companyCBCards)
+
+                let bestCard = null;
+                let bestCashback = 0;
+                
+                //Iterate over each card in addedCards
+                for (const cardId of addedCards) {
+                    let cardDocRef = doc(db, "Cards", cardId);
+                    let cardDocSnap = await getDoc(cardDocRef);
+                    let currentCashback = 0;
+
+                    if (cardDocSnap.data().Type == "DC"){  //When card is a debit card, no need to worry about CB cap or minspend. Just calculate rebate
+                      currentCashback = this.paymentAmount * cardDocSnap.data().Data.RebatePercent/100
+                      if (companyCBCards){
+                        if (cardId in companyCBCards) {
+                        currentCashback += this.paymentAmount * companyCBCards[cardId]/100
+                      }
+                      }
+                    }
+                    else if (cardDocSnap.data().Type == "CC"){
+                      currentCashback = this.paymentAmount * cardDocSnap.data().Data.CBPercent/100
+                      console.log(currentCashback)
+                      if (companyCBCards){
+                        if (cardId in companyCBCards) {
+                        currentCashback += this.paymentAmount * companyCBCards[cardId]/100
+                        }
+                      }
+                      //handle logic for cb cap is true and cb cap has been met, disqualify and if min spend has not been met, use it automatically
+                      if (cardDocSnap.data().Data.CBCap == true){
+                        //check for current cb cap 
+                        let current = userDocSnap.data().CardsWithCBCap[cardId][date].Current
+                        //console.log(current)
+                        let limit = userDocSnap.data().CardsWithCBCap[cardId][date].Limit
+                        //console.log(limit)
+                        if (current >= limit){
+                          continue
+                        }
+                        //if cashback met, continue. else, move on to next part. 
+                        //We can safely assume cards that have met CB Limit would have met minspend, and hence have no value in being chosen
+                      }
+                      if (cardDocSnap.data().Data.MinSpend == true){
+                        let spend = userDocSnap.data().CardsWithMinSpend[cardId][date].Current
+                        //console.log(spend)
+                        let target = userDocSnap.data().CardsWithMinSpend[cardId][date].Target
+                        //console.log(target)
+                        if (spend < target){
+                          console.log(`inside spendtarget if, ${bestCashback}, ${currentCashback}`)
+                          bestCard = cardId;
+                          bestCashback = currentCashback
+                          console.log(`Best card is ${bestCard} with cashback of $${bestCashback}, inside minspend check`)
+                          this.bestCardInfo = bestCard
+                          this.bestCB = bestCashback
+                        }
+                        // check if minspend is met
+                        //automatically qualify this card to be best card if minspend not met
+                      }
+                    }
+            
+
+                    if (currentCashback> bestCashback) {
+                            bestCard = cardId;
+                            bestCashback = currentCashback;
+                    }
+                }
+                console.log(`Best card is ${bestCard} with cashback of $${bestCashback}`)
+                this.bestCardInfo = bestCard;
+                this.bestCB = bestCashback;
+
+              } catch (error){
+                console.error('Error finding card: ', error);
+              }
+            },
+
+            async updateTransaction(){
+              
+              try {
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth() + 1;
+                const date = `${year}-${month}`
+                console.log(this.user);
+
+                const userEmail = String(this.user.email);
+                const userDocRef = doc(db, "Users", userEmail);
+                const userDocSnap = await getDoc(userDocRef);
+               
+                
+                const companyDocRef = doc(db, "Companies", this.recipient);
+                const companyDocSnap = await getDoc(companyDocRef);
+                const companyCBCards = companyDocSnap.data().CB //Returns a dictionary of cards that are compatible with the company
+                
+                let cardCB = 0;
+
+                let cardDocRef = doc(db, "Cards", this.card);
+                let cardDocSnap = await getDoc(cardDocRef);
+
+                if (cardDocSnap.data().Type == "DC"){  //When card is a debit card, no need to worry about CB cap or minspend. Just calculate rebate
+                  cardCB = this.paymentAmount * cardDocSnap.data().Data.RebatePercent/100
+                  if (companyCBCards){
+                    if (this.card in companyCBCards) {
+                    cardCB += this.paymentAmount * companyCBCards[this.card]/100
+                    }
+                  }
+                  
+                }
+                else if (cardDocSnap.data().Type == "CC"){
+                  cardCB = this.paymentAmount * cardDocSnap.data().Data.CBPercent/100
+                  if (companyCBCards){
+                    if (this.card in companyCBCards) {
+                    cardCB += this.paymentAmount * companyCBCards[this.card]/100  
+                  }
+                  }
+                  //handle logic for cb cap is true and cb cap has been met, disqualify and if min spend has not been met, use it automatically
+                  if (cardDocSnap.data().Data.CBCap == true){
+                    //check for current cb cap 
+                    let current = userDocSnap.data().CardsWithCBCap[this.card][date].Current
+                    //console.log(current)
+                    let limit = userDocSnap.data().CardsWithCBCap[this.card][date].Limit
+                    //console.log(limit)
+                    if (current >= limit){
+                      cardCB = 0
+                    }
+                    else if (current + cardCB > limit){
+                      cardCB = limit - current;
+                      let updatedCB = limit;
+                      await updateDoc(userDocRef, {
+                        [`CardsWithCBCap.${this.card}.${date}.Current`]: updatedCB
+                    });}
+                    else {
+                      let updatedCB = cardCB;
+                      await updateDoc(userDocRef, {
+                        [`CardsWithCBCap.${this.card}.${date}.Current`]: updatedCB
+                    });
+                    }
+                  }
+                    //if cashback limit met, no CB will be awarded
+                    //if after spend, upcoming CB reward and current CB reward exceeds limit, upcoming CB reward will be the difference between limit and curret
+                    //Eg Limit is 500, current is 490. Even if CB reward is 50, the max CB you will receive is 500-490
+                    //We can safely assume cards that have met CB Limit would have met minspend, and hence have no value in being chosen
+                  
+                  if (cardDocSnap.data().Data.MinSpend == true){
+                    let currentspend = userDocSnap.data().CardsWithMinSpend[this.card][date].Current
+                    currentspend += this.paymentAmount;
+                    await updateDoc(userDocRef, {
+                        [`CardsWithMinSpend.${this.card}.${date}.Current`]: currentspend
+                    });}
+                  
+                }
+
+                const newTransaction = {
+                    amount: this.paymentAmount,
+                    category: this.category,
+                    recipient: this.recipient,
+                    card: this.card,
+                    timestamp: new Date(),
+                    cardCB: cardCB
+                };
+
+                // Add new transaction to the Transactions array using arrayUnion
+                await updateDoc(userDocRef, {
+                    Transactions: arrayUnion(newTransaction)
+                });
+                        
+                } catch (error) {
+                    console.error('Error updating Transactions: ', error);
+                }
+
             },
             submitForm() {
                 // Here you can handle the form submission, for example, by sending the data to an API
@@ -83,22 +316,34 @@
                 console.log('Recipient:', this.recipient);
                 console.log('Category:', this.category);
                 
-                // Reset form fields after submission
-                this.paymentAmount= 0,
-                this.recipient= '',
-                this.category= ''
+                this.updateTransaction()
+                  .then(() => {
+                      // Reset form fields after successful submission
+                      this.paymentAmount = 0;
+                      this.recipient = '';
+                      this.category = '';
+                  })
+                  .catch(error => {
+                      console.error('Error submitting form:', error);
+                      // Optionally, provide feedback to the user about the error
+                  });
             }
         },
         watch: {
             recipient(newValue) {
               // Watcher for recipient changes
-              if (newValue && this.category) {
+              if (newValue && this.category && this.paymentAmount > 0) {
                 this.findBestCard();
               }
             },
             category(newValue) {
               // Watcher for category changes
-              if (newValue && this.recipient) {
+              if (newValue && this.recipient && this.paymentAmount > 0) {
+                this.findBestCard();
+              }
+            },
+            paymentAmount(newValue){
+              if (newValue && this.recipient && this.category){
                 this.findBestCard();
               }
             }

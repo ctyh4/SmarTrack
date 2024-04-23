@@ -51,6 +51,9 @@ export default {
         UID: user.uid,
         Liked: [],
         Inventory: [],
+        CardsWithMinSpend: {},
+        CardsWithCBCap: {},
+        Transactions: []
       })
       .then(() => {
         console.log("User data stored in Firestore successfully");

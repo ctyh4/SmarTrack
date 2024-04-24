@@ -52,23 +52,22 @@ export default {
     async confirm() {
       let Card = document.getElementById("cardName1").value
 
-      if (!Card) {
+      if (!this.selected) {
         alert("Please select a card name.");
         return;
       } try {
-        const userDocRef = doc(db, "Users", user.email);
+        const userDocRef = doc(db, "Users", this.user.email);
         console.log(userDocRef);
 
         const docSnap = await getDoc(userDocRef);
-        // if (docSnap.exists()) {
+        if (docSnap.exists()) {
           await updateDoc(userDocRef, {
-            Inventory: arrayUnion(Card),
+            Inventory: arrayUnion(this.selected),
           })
-          alert("Confirming your data for card: " + Card)
-          Card = '';  //Reset selected value
-          this.$emit("confirmed");
+          alert("Confirming your data for card: " + this.selected)
+          this.$emit("confirmed", this.selected);
           this.$router.push("/cards");
-        // }
+        }
       } catch(error) {
         console.error("Error adding card: ", error);
       }
@@ -79,25 +78,24 @@ export default {
 
 <style scoped>
 .container {
-  text-align: center;
-  margin: auto;
-  align-items: center;
-  display: flex;
+  /* margin: auto; */
   flex-direction: column;
-  justify-content: center;
   padding: 10px;
-  width: 430px;
+  width: 400px;
   border-color: #7F56D9;
   border: 2px;
   border-style: solid;
   border-radius: 20px;
+  position: relative;
 }
 
-.myform {
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  width: 100%;
+#delete-button {
+  position: absolute;
+  color:rgb(95, 93, 93);
+  top: 10px;
+  background: transparent; 
+  border: none; 
+  cursor: pointer;
 }
 
 h2 {
@@ -109,24 +107,10 @@ h2 {
   margin-bottom: 23px;
 }
 
-.formli {
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  width: 350px;
-  margin: auto;
-}
-
-#issuer, #selectCard {
-  font-family: pjs;
-  font-size: 14px;
-  font-weight: 500;
-  margin: auto;
-}
-
 label {
   display: inline-block;
   margin-right: 13px;
+  margin-left: 0px;
   width: 50%;
   text-align: right;
   font-family: pjs;
@@ -138,10 +122,6 @@ label {
 select {
   height: 35px;
   width: 45%;
-}
-
-input {
-  height: 30px;
 }
 
 #confirm-button {

@@ -3,10 +3,10 @@
   <div id="filter">
     <FilterCard/> 
   </div>
+  <HomeButton></HomeButton>
     <div class="cards-page" v-if="user">
       <SearchBar/><br />
         <div class="top-nav">
-            <HomeButton></HomeButton>
             <!-- <button id="filter-button" type="button">Filters</button> -->
             <button id="add-card-button" type="button" @click="showAddCardForm = true">
               <img id = "icon" src = "./../assets/add_card_button.png">
@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      user:null,
+      user: null,
       sidebarActive: false,
       showAddCardForm: false,
       cards: [],
@@ -92,7 +92,7 @@ export default {
     },
     async addCard(cardName) {
       try {
-        const userDocRef = doc(db, "Users", String(user.email));
+        const userDocRef = doc(db, "Users", this.user.email);
         await updateDoc(userDocRef, {
           Inventory: arrayUnion(cardName),
         });
@@ -101,7 +101,7 @@ export default {
         this.showAddCardForm = false; //Close Add Card Form
         this.$router.push("/cards");
       } catch (error) {
-        console.error("Error updating profile:");
+        console.error("Error updating profile:", error);
       } 
     },
     async deleteCard(cardName, index) {
@@ -149,9 +149,8 @@ export default {
 }
 
 .cards-page {
-    text-align: center;
-    align-items: center;
-    margin: auto;
+  display: grid;
+  margin-left: 30px;
 }
 
 .top-nav {
@@ -163,74 +162,8 @@ export default {
   color: #7F56D9;
 }
 
-/* Style the links inside the navigation bar */
-.top-nav a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-/* Change the color of links on hover */
-.top-nav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* Style the "active" element to highlight the current page */
-.top-nav a.active {
-  background-color: #2196F3;
-  color: white;
-}
-
-/* Style the search box inside the navigation bar */
-.search-bar input[type=text] {
-  float: right;
-  padding: 6px;
-  border: none;
-  margin: auto;
-  margin-top: 8px;
-  font-size: 15px;
-  font-family: pjs;
-  width: 400px;
-}
-
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-@media screen and (max-width: 600px) {
-  .top-nav a, .top-nav input[type=text] {
-    float: none;
-    display: block;
-    text-align: left;
-    width: 100%;
-    margin: 0;
-    padding: 14px;
-  }
-  .top-nav input[type=text] {
-    border: 1px solid #ccc;
-  }
-}
-
-#home-button, #filter-button {
-    top: 25px;
-    right: 10px;
-    background-color: #7F56D9;
-    font-family: pjs;
-    font-weight: 600;
-    font-size: 15px;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    margin: 4px 2px;
-    cursor: pointer;
-    width: 80px;
-    border-radius: 5px;
-}
-
 #add-card-button {
-    top: 25px;
+    top: 20px;
     right: 10px;
     font-family: pjs;
     font-weight: 600;
@@ -246,10 +179,6 @@ export default {
     border-color: #7F56D9;
 }
 
-#home-button {
-    position: absolute;
-}
-
 .search-bar-container {
     display: flex;
     flex-direction: column;
@@ -263,12 +192,6 @@ export default {
     border-radius: 5px;
     width: 50%;
     box-sizing: border-box;
-}
- 
-#list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
 .inventory {

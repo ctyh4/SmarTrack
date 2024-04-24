@@ -1,66 +1,86 @@
 <template>
-  <div>
-    <form @submit.prevent="submitForm">
-      <div class="form-group">
-        <label for="paymentAmount">Payment Amount:</label>
-        <input
-          type="number"
-          id="paymentAmount"
-          v-model="paymentAmount"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="selectRecipient">Recipient:</label>
-        <select id="selectRecipient" v-model="recipient" required>
-          <option value="">Select a Recipient</option>
-          <option
-            v-for="recipient in recipients"
-            :key="recipient"
-            :value="recipient"
-          >
-            {{ recipient }}
-          </option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="selectCategory">Category:</label>
-        <select id="selectCategory" v-model="category" required>
-          <option value="">Select a Category</option>
-          <option
-            v-for="category in categories"
-            :key="category"
-            :value="category"
-          >
-            {{ category }}
-          </option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="selectCard">Card:</label>
-        <select id="selectCard" v-model="card" required>
-          <option value="">Select a Card</option>
-          <option v-for="card in cards" :key="card" :value="card">
-            {{ card }}
-          </option>
-        </select>
-      </div>
-
-      <button type="submit">Submit</button>
-    </form>
+  <div class="header">
+    <h2>Making a payment?<br> 
+    Fill in the details and our algorithm 
+    will choose the best card for you to use!</h2>
+    
+    <br><br>
   </div>
+  
+    
+    <form @submit.prevent="submitForm">
+    <div class="form-group">
+      
+      <label for="paymentAmount">Payment Amount:</label>
+      <input
+        type="number"
+        id="paymentAmount"
+        v-model="paymentAmount"
+        required
+      />
+      <br><br>
+
+    
+      <label for="selectRecipient">Recipient:</label>
+      <select id="selectRecipient" v-model="recipient" required>
+        <option value="">Select a Recipient</option>
+        <option
+          v-for="recipient in recipients"
+          :key="recipient"
+          :value="recipient"
+        >
+          {{ recipient }}
+        </option>
+      </select>
+      <br><br>
+    
+
+    
+      <label for="selectCategory">Category:</label>
+      <select id="selectCategory" v-model="category" required>
+        <option value="">Select a Category</option>
+        <option
+          v-for="category in categories"
+          :key="category"
+          :value="category"
+        >
+          {{ category }}
+        </option>
+      </select>
+      <br><br>
+    
+
+    
+      <label for="selectCard">Selected Card:</label>
+      <select id="selectCard" v-model="card" required>
+        <option value="">Select a Card</option>
+        <option v-for="card in cards" :key="card" :value="card">
+          {{ card }}
+        </option>
+      </select>
+    </div> 
+    <div class = "submit">
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+  
+
   <div v-if="bestCardInfo && bestCB">
     <h2 id="reco">
-      The best card is {{ bestCardInfo }} with total cashback {{ bestCB }}
+      We recommend you to use the {{ bestCardInfo }} <br> with total cashback of ${{ bestCB }}
     </h2>
+    <div class="card-image-container">
+      <img :src="imageUrl" :alt="card.id" class="card-image" />
+    </div>
+    <br><br>
+
   </div>
+   
 </template>
 
 <script>
 import firebaseApp from "../firebase.js";
+import SmarTrack from "@/assets/SmarTrack.png";
 import {
   getFirestore,
   getDocs,
@@ -78,6 +98,7 @@ export default {
   name: "PaymentForm",
   data() {
     return {
+      imageUrl: SmarTrack,
       paymentAmount: 0,
       recipients: [],
       recipient: "",
@@ -236,6 +257,8 @@ export default {
                 );
                 this.bestCardInfo = bestCard;
                 this.bestCB = bestCashback;
+                const image = await import(`@/assets/${cardId}.webp`);
+                this.imageUrl = image.default;
               }
               // check if minspend is met
               //automatically qualify this card to be best card if minspend not met
@@ -251,9 +274,12 @@ export default {
           `Best card is ${bestCard} with cashback of $${bestCashback}`
         );
         this.bestCardInfo = bestCard;
-        this.bestCB = bestCashback;
+        this.bestCB = bestCashback.toFixed(2);
+        const image = await import(`@/assets/${bestCard}.webp`);
+        this.imageUrl = image.default;
       } catch (error) {
         console.error("Error finding card: ", error);
+        this.imageUrl = SmarTrack;
       }
     },
 
@@ -320,7 +346,7 @@ export default {
             }
           }
           //if cashback limit met, no CB will be awarded
-          //if after spend, upcoming CB reward and current CB reward exceeds limit, upcoming CB reward will be the difference between limit and curret
+          //if after spending, upcoming CB reward and current CB reward exceeds limit, upcoming CB reward will be the difference between limit and curret
           //Eg Limit is 500, current is 490. Even if CB reward is 50, the max CB you will receive is 500-490
           //We can safely assume cards that have met CB Limit would have met minspend, and hence have no value in being chosen
 
@@ -371,12 +397,25 @@ export default {
       console.log("Recipient:", this.recipient);
       console.log("Category:", this.category);
 
+      if (this.card !== this.bestCardInfo) {
+      // If the selected card is not the best card, ask for confirmation
+      const proceed = window.confirm("The selected card is not the best card for this transaction. Do you want to proceed?");
+      if (!proceed) {
+        return; // Stop further execution if the user chooses not to proceed
+      }
+    }
+
       this.updateTransaction()
         .then(() => {
           // Reset form fields after successful submission
           this.paymentAmount = 0;
           this.recipient = "";
           this.category = "";
+          this.card = ""; 
+          this.imageUrl= SmarTrack;
+          this.bestCardInfo= "";
+          this.bestCB= "";
+          window.alert("Transaction submitted successfully!");
         })
         .catch((error) => {
           console.error("Error submitting form:", error);
@@ -407,7 +446,43 @@ export default {
 </script>
 
 <style scoped>
+.header {
+  text-align: center;
+}
+
+label {
+  font-weight: bold;
+  display:block;
+}
+
+
 .form-group {
   margin-bottom: 1rem;
+  display: block;
+  text-align: center;
+}
+
+form {
+  text-align: center;
+  align-items: center;
+  margin: auto;
+}
+
+input:hover {
+  box-shadow: 3px 3px plum;
+  border-radius: 2px;
+}
+
+.submit{
+  text-align: center;
+}
+      
+option {
+  text-align: center; 
+}
+
+input{
+  text-align: center; 
 }
 </style>
+

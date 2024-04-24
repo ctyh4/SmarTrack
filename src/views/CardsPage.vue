@@ -27,7 +27,6 @@
       onAuthStateChanged(auth,(user)=> {
         if (user){
           this.user = user;
-          this.storeFS(user);
         }
       })
     },

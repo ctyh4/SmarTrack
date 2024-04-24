@@ -1,7 +1,7 @@
 <template>
   <div v-if="user">
     <div class="sidebar-container">
-      <div id="mySidenav" class="sidenav" :class="{ 'openNavClass': isActive }">
+      <div id="mySidenav" class="sidenav" :class="{ openNavClass: isActive }">
         <a class="closebtn" @click="toggleNav">&times;</a>
 
         <div id="tabs">

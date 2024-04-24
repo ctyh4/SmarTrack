@@ -35,7 +35,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 #btn{
   font-family: pjs;
   text-align: center;

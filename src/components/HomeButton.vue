@@ -1,7 +1,9 @@
 <template>
   <div>
     <button id="homebutton" type="button" @click="this.$router.push('/home')">
+      
       Home
+      <img id = "icon" src = "./../assets/home_button.png">
     </button>
   </div>
 </template>
@@ -9,6 +11,10 @@
 <style>
 #homebutton {
   font-family: pjs;
+  font-size: 16px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
   position: absolute;
   border: transparent;
   top: 15px;
@@ -20,6 +26,17 @@
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 10px;
+  width: 100px;
+  height: 40px;
+  text-decoration: none;
+}
+
+#icon {
+  width: 17px;
+  height: 17px;
+  margin-right: 1px;
+  margin-top: 23px;
+  margin-left: 7px;
 }
 
 button:hover {

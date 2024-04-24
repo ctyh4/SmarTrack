@@ -83,22 +83,6 @@ export default {
       }
     },
     async submitBudget() {
-      // const currentMonth = new Date().toLocaleString("default", {
-      //   month: "long",
-      // });
-      // const currentYear = new Date().getFullYear().toString();
-      // const monthYearKey = `${currentMonth}-${currentYear}`;
-      // const budgetData = {
-      //   [monthYearKey]: {
-      //     Food: this.budget.Food,
-      //     Miscellaneous: this.budget.Miscellaneous,
-      //     Transport: this.budget.Transport,
-      //     Retail: this.budget.Retail,
-      //     Utilities: this.budget.Utilities,
-      //   },
-      // };
-      // console.log(`Submitting budget data:`, budgetData);
-
       try {
         
         // const currentMonth = new Date().toLocaleString("default", {

@@ -34,11 +34,11 @@ export default {
     return {
       categories: [],
       budget: {
-        Food: null,
+        Food: 0,
         Miscellaneous: 0,
-        Retail: null,
-        Transport: null,
-        Utilities: null,
+        Retail: 0,
+        Transport: 0,
+        Utilities: 0,
       },
     };
   },
@@ -62,11 +62,11 @@ export default {
   methods: {
     resetForm() {
       this.budget = {
-        Food: null,
+        Food: 0,
         Miscellaneous: 0,
-        Retail: null,
-        Transport: null,
-        Utilities: null,
+        Retail: 0,
+        Transport: 0,
+        Utilities: 0,
       };
     },
     async getCategories() {
@@ -74,45 +74,42 @@ export default {
         const querySnapshot = await getDocs(collection(db, "Categories"));
         console.log(querySnapshot);
         querySnapshot.forEach((doc) => {
+          //console.log(doc.id)
           this.categories.push(doc.id);
         });
+        console.log(this.categories);
       } catch (error) {
         console.error("Error getting categories: ", error);
       }
     },
     async submitBudget() {
-      const currentMonth = new Date().toLocaleString("default", {
-        month: "long",
-      });
-      const currentYear = new Date().getFullYear().toString();
-      const monthYearKey = `${currentMonth}-${currentYear}`;
-      const budgetData = {
-        [monthYearKey]: {
-          Food: this.budget.Food,
-          Miscellaneous: this.budget.Miscellaneous,
-          Transport: this.budget.Transport,
-          Retail: this.budget.Retail,
-          Utilities: this.budget.Utilities,
-        },
-      };
-      console.log(`Submitting budget data:`, budgetData);
-
       try {
+        // const currentMonth = new Date().toLocaleString("default", {
+        // month: "long",
+        // });
+        // const currentYear = new Date().getFullYear().toString();
+        // const monthYearKey = `${currentMonth}-${currentYear}`;
+        const budgetData = [
+          {
+            Date: new Date(),
+            Food: this.budget.Food,
+            Miscellaneous: this.budget.Miscellaneous,
+            Transport: this.budget.Transport,
+            Retail: this.budget.Retail,
+            Utilities: this.budget.Utilities,
+          },
+        ];
+        console.log(`Submitting budget data:`, budgetData);
         const auth = getAuth();
         const user = auth.currentUser;
 
-        if (user) {
-          const budgetDocRef = doc(db, "Users", user.email);
+        const budgetDocRef = doc(db, "Users", user.email);
 
-          await updateDoc(budgetDocRef, { Budgets: budgetData });
+        await updateDoc(budgetDocRef, { Budgets: budgetData });
 
-          console.log(`Budget for ${currentMonth} saved successfully.`);
-          alert(`Budget for ${currentMonth} saved successfully.`);
-          this.resetForm();
-        } else {
-          console.error("User is not logged in.");
-          alert("You must be logged in to save your budget.");
-        }
+        console.log(`Budget for ${currentMonth} saved successfully.`);
+        alert(`Budget for ${currentMonth} saved successfully.`);
+        this.resetForm();
       } catch (error) {
         console.error("Error submitting budget: ", error);
         alert("Error submitting budget.");

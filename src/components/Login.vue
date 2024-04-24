@@ -7,11 +7,10 @@
       Sign in to get started!
     </div> 
     <div id="firebaseui-auth-container"></div>
-
-    <!-- Form to collect email for sign-up -->
+    <h2> Sign in via your email address </h2>
     <form  @submit.prevent="signUp">
       <input class="input-1" type="email" v-model="email" placeholder="Enter your email">
-      <button class="button-6" type="submit">Sign Up</button>
+      <button class="button-6" type="submit">Sign In</button>
     </form>
 
 
@@ -46,7 +45,6 @@ export default {
       signInSuccessUrl: "/home",
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
         
       ],
       // Other config options...
@@ -66,7 +64,8 @@ export default {
       
      
       await sendSignInLinkToEmail(auth, this.email, actionCodeSettings)
-      console.log("email sent")
+      window.alert("Check your email for sign in link.")
+      this.email = ''
         if(isSignInWithEmailLink(auth, window.location.href)) {
           await signInWithEmailLink(auth, this.email, window.location.href)   
       }
@@ -83,8 +82,7 @@ export default {
 }
 
 #firebaseui-auth-container {
-  margin-top: 50px;
-  margin-bottom: 50px;  
+  margin-top: 50px;  
 }
 
 #pagecontent {

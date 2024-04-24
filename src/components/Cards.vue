@@ -1,24 +1,22 @@
 <template>
-  <!-- <sidebar></sidebar>  -->
-  <div>
+  <sidebar></sidebar> 
+  <div id="filter">
     <FilterCard @update-filter="handleFilterUpdate" /> 
   </div>
     <div class="cards-page" v-if="user">
       <SearchBar @search="handleSearch" /><br />
         <div class="top-nav">
-            <button id="home-button" type="button" @click="$router.push('/home')">Home</button>
-            <button id="filter-button" type="button">Filters</button>
-            <!-- <div id="search-bar-container">
-              <input id = "search-bar" type="text" placeholder="Search here">
-            </div> -->
+            <HomeButton></HomeButton>
+            <!-- <button id="filter-button" type="button">Filters</button> -->
             <button id="add-card-button" type="button" @click="showAddCardForm = true">Add Card</button>
             <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
         </div>
 
         <div class="inventory">
-          <!-- <CardsInventory/> -->
-          <div v-for="cardName in cards" :key="cardName" class="card">
+          <div v-for="(cardName, index) in cards" :key="cardName" class="card">
+            <!-- <img id = "icon" src = "./../assets/${cardName}.png"> -->
             <h3>{{ cardName }}</h3>
+            <button @click="deleteCard(cardName, index)" style="font-size: 14px;">Delete</button>
           </div>
         </div>
     </div>
@@ -30,6 +28,7 @@ import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
 import AddCardForm from './AddCardForm.vue';
 import CardsInventory from './CardsInventory.vue';
+import HomeButton from './HomeButton.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from '../firebase.js';
 import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
@@ -42,6 +41,7 @@ export default {
     SearchBar,
     AddCardForm,
     CardsInventory,
+    HomeButton,
   },
   data() {
     return {
@@ -49,6 +49,7 @@ export default {
       sidebarActive: false,
       showAddCardForm: false,
       cards: [],
+      // imageUrl: SmarTrack,
     };
   },
   mounted() {
@@ -56,10 +57,13 @@ export default {
     onAuthStateChanged (auth, user => {  
       if (user) {
         this.user = user;
-        this.fetchData(user);
+        this.fetchCards(user);
       }
     })
   },
+  // created() {
+  //   this.setImageUrl(this.card.id); 
+  // },
   methods: {
     handleSidebarToggle(isActive) {
       this.sidebarActive = isActive;
@@ -99,22 +103,61 @@ export default {
         console.error("Error updating profile:", error);
       } 
     },
-    watch: {
-    // When the user logs in, fetch their card inventory
-      user: {
-        immediate: true,
-        handler(newUser) {
-          if (newUser) {
-            this.fetchCards(newUser);
-          }
+    async deleteCard(cardName, index) {
+      try {
+        // Confirm with the user that they want to delete the card
+        if (!confirm(`Are you sure you want to delete the card "${cardName}"?`)) {
+          return;
         }
-      },
+
+        // Update Firestore
+        // Fetch the current inventory, filter out the card to delete, then update Firestore
+        const userDocRef = doc(db, "Users", this.user.email);
+        const docSnap = await getDoc(userDocRef);
+
+        if (docSnap.exists() && docSnap.data().Inventory) {
+          const updatedInventory = docSnap.data().Inventory.filter(item => item !== cardName);
+          await updateDoc(userDocRef, {
+            Inventory: updatedInventory,
+          });
+
+          // Remove the card from the local state
+          this.cards.splice(index, 1);
+        }
+      } catch (error) {
+        console.error("Error deleting card:", error);
+      }
     },
+    async setImageUrl(cardId) {
+      try {
+        const image = await import(`@/assets/${cardId}.webp`);
+        this.imageUrl = image.default; // Update the data property with the loaded image
+      } catch (e) {
+        console.error(e);
+        this.imageUrl = SmarTrack; // Fallback if the image fails to load
+      }
+    },
+    // watch: {
+    // // When the user logs in, fetch their card inventory
+    //   user: {
+    //     immediate: true,
+    //     handler(newUser) {
+    //       if (newUser) {
+    //         this.fetchCards(newUser);
+    //       }
+    //     }
+    //   },
+    // },
   },
 }
 </script>
 
 <style scoped>
+#filter {
+  margin-left: 150px;
+  margin-top: 20px;
+}
+
 .cards-page {
     text-align: center;
     align-items: center;
@@ -236,6 +279,14 @@ export default {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.inventory {
+  align-items: center;
+  text-align: center;
+  margin: auto;
+  width: 700px;
+  height: 50%;
 }
  
 .cards {

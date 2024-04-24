@@ -3,7 +3,6 @@
     <div class="sidebar-container">
       <div id="mySidenav" class="sidenav" :class="{ 'openNavClass': isActive }">
         <a class="closebtn" @click="toggleNav">&times;</a>
-<<<<<<< HEAD
 
         <div id="tabs">
           <a v-if="$route.path !== '/home'" class = "page-router"  @click="$router.push('/home')">Home</a> 
@@ -12,17 +11,7 @@
           <a v-if="$route.path !== '/discovery'" class = "page-router" @click="$router.push('/discovery')">Discovery</a>
           <a v-if="$route.path !== '/payment'" class = "page-router" @click="$router.push('/payment')">Payment Recommendation</a>
           <a v-if="$route.path !== '/tracking'" class = "page-router" @click="$router.push('/tracking')">Tracking & Analysis</a>
-          <a v-if="$route.path !== '/indvcard'" class = "page-router" @click="$router.push('/indvcard')">Individual Card</a>
         </div>
-=======
-    
-        <!-- <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Home')">Home</a> -->
-        <a class = "page-router" style = "margin-top: 45px;" @click="$router.push('/Profile')">Profile</a>
-        <a class = "page-router" @click="$router.push('/Cards')">Cards</a>
-        <a class = "page-router" @click="$router.push('/Discovery')">Discovery</a>
-        <a class = "page-router" @click="$router.push('/Payment')">Payment Recommendation</a>
-        <a class = "page-router" @click="$router.push('/transactions')">Tracking & Analysis</a>
->>>>>>> 57e26fcd52d69526de6242a55a26e59f386893b2
       </div>
       
       <div id="main" :class="{ 'pushMainContent': isActive }">

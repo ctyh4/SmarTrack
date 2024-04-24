@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chart.js": "^4.4.2",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "firebase": "^10.6.0",
     "firebaseui": "^6.1.0",
     "vue": "^3.4.21",

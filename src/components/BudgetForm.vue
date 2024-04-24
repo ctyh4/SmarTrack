@@ -101,20 +101,19 @@ export default {
 
       try {
         
-        const currentMonth = new Date().toLocaleString("default", {
-        month: "long",
-        });
-        const currentYear = new Date().getFullYear().toString();
-        const monthYearKey = `${currentMonth}-${currentYear}`;
-        const budgetData = {
-          [monthYearKey]: {
-            Food: this.budget.Food,
-            Miscellaneous: this.budget.Miscellaneous,
-            Transport: this.budget.Transport,
-            Retail: this.budget.Retail,
-            Utilities: this.budget.Utilities,
-          },
-        };
+        // const currentMonth = new Date().toLocaleString("default", {
+        // month: "long",
+        // });
+        // const currentYear = new Date().getFullYear().toString();
+        // const monthYearKey = `${currentMonth}-${currentYear}`;
+        const budgetData = [{
+          Date: new Date(), 
+          Food: this.budget.Food,
+          Miscellaneous: this.budget.Miscellaneous,
+          Transport: this.budget.Transport,
+          Retail: this.budget.Retail,
+          Utilities: this.budget.Utilities,
+        }];
         console.log(`Submitting budget data:`, budgetData);
         const auth = getAuth();
         const user = auth.currentUser;
@@ -165,7 +164,4 @@ export default {
   font-weight: bold;
 }
 
-button {
-  /* Style your button accordingly */
-}
 </style>

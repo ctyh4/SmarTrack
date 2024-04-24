@@ -1,6 +1,7 @@
 <template>
   <div class="container" v-show="isVisible">
     <form class="myform">
+      <button id="delete-button">x</button>
       <h2>Add Card</h2>
 
         <label for="cardName1">Card Name</label>
@@ -16,7 +17,6 @@
 
       <div class="confirm">
         <button id = "confirm-button" type = "button" v-on:click="confirm">Confirm</button>
-        <!-- <button id="cancelButton" type="button" @click="cancel()">Cancel</button> -->
       </div>
     </form>
   </div>
@@ -33,6 +33,7 @@ export default {
     return {
       user: null,
       cardName1: '',
+      selected: '',
     };
   },
   props: {
@@ -44,7 +45,6 @@ export default {
         onAuthStateChanged (auth, user => {  
             if (user) {
                 this.user = user;
-                this.fetchData(user);
             }
         })
     },
@@ -56,8 +56,8 @@ export default {
         alert("Please select a card name.");
         return;
       } try {
-        const userDocRef = doc(db, "Users", this.userEmail);
-        // console.log(userDocRef);
+        const userDocRef = doc(db, "Users", user.email);
+        console.log(userDocRef);
 
         const docSnap = await getDoc(userDocRef);
         // if (docSnap.exists()) {
@@ -66,16 +66,13 @@ export default {
           })
           alert("Confirming your data for card: " + Card)
           Card = '';  //Reset selected value
-          this.$emit("confirmed", Card);
+          this.$emit("confirmed");
           this.$router.push("/cards");
         // }
       } catch(error) {
         console.error("Error adding card: ", error);
       }
     },
-    // async cancel() {
-    //   this.$router.push("/cards");
-    // },
   }
 };
 </script>

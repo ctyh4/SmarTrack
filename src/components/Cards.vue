@@ -1,14 +1,17 @@
 <template>
   <sidebar></sidebar> 
   <div id="filter">
-    <FilterCard @update-filter="handleFilterUpdate" /> 
+    <FilterCard/> 
   </div>
     <div class="cards-page" v-if="user">
-      <SearchBar @search="handleSearch" /><br />
+      <SearchBar/><br />
         <div class="top-nav">
             <HomeButton></HomeButton>
             <!-- <button id="filter-button" type="button">Filters</button> -->
-            <button id="add-card-button" type="button" @click="showAddCardForm = true">Add Card</button>
+            <button id="add-card-button" type="button" @click="showAddCardForm = true">
+              <img id = "icon" src = "./../assets/add_card_button.png">
+              Add Card
+            </button>
             <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
         </div>
 
@@ -27,7 +30,6 @@ import Sidebar from '@/components/Sidebar.vue';
 import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
 import AddCardForm from './AddCardForm.vue';
-import CardsInventory from './CardsInventory.vue';
 import HomeButton from './HomeButton.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from '../firebase.js';
@@ -40,7 +42,6 @@ export default {
     FilterCard,
     SearchBar,
     AddCardForm,
-    CardsInventory,
     HomeButton,
   },
   data() {
@@ -100,7 +101,7 @@ export default {
         this.showAddCardForm = false; //Close Add Card Form
         this.$router.push("/cards");
       } catch (error) {
-        console.error("Error updating profile:", error);
+        console.error("Error updating profile:");
       } 
     },
     async deleteCard(cardName, index) {
@@ -121,7 +122,7 @@ export default {
             Inventory: updatedInventory,
           });
 
-          // Remove the card from the local state
+          // Remove the card from local state
           this.cards.splice(index, 1);
         }
       } catch (error) {
@@ -137,17 +138,6 @@ export default {
         this.imageUrl = SmarTrack; // Fallback if the image fails to load
       }
     },
-    // watch: {
-    // // When the user logs in, fetch their card inventory
-    //   user: {
-    //     immediate: true,
-    //     handler(newUser) {
-    //       if (newUser) {
-    //         this.fetchCards(newUser);
-    //       }
-    //     }
-    //   },
-    // },
   },
 }
 </script>

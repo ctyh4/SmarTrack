@@ -43,7 +43,7 @@ const routes = [
     component: IndvCard,
   },
   {
-    path: "/ompare",
+    path: "/compare",
     name: "Compare Card",
     component: CompareCard,
   },

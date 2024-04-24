@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 #homebutton {
   font-family: pjs;
   font-size: 16px;

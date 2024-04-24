@@ -11,7 +11,7 @@
       <label>Total: $</label>
       <span>{{ totalBudget }}</span>
     </div>
-    <button @click="submitBudget">Save</button>
+    <button id="savebutton" type="button" @click="submitBudget">Save</button>
   </div>
 </template>
 
@@ -150,7 +150,20 @@ export default {
   font-weight: bold;
 }
 
-button {
-  /* Style your button accordingly */
+#savebutton {
+  font-family: pjs;
+  border: transparent;
+  background-color: #7f56d9;
+  color: white;
+  padding: 5px 10px;
+  margin: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+button:hover {
+  background-color: transparent;
+  opacity: 0.7;
 }
 </style>

@@ -50,7 +50,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   margin-top: 30px;
   width: 80%;

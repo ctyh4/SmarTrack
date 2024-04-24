@@ -61,7 +61,7 @@
   };
   </script>
       
-  <style>
+  <style scoped>
   .sidebar-container {
     display: flex;
     height: 100vh;

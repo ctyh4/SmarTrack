@@ -42,7 +42,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .profilepage {
   margin-top: 30px;
   margin-left: auto;

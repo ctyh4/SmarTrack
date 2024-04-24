@@ -1,7 +1,7 @@
 <template v-if="user">
   <Sidebar />
   <HomeButton />
-  <div v-if="user">
+  <div class="container" v-if="user">
     <div>
       <router-link to="/tracking/analysis">Analysis</router-link> |
       <router-link to="/tracking/transactions">Transactions</router-link> |
@@ -71,8 +71,9 @@ export default {
 </script>
 
 <style>
-.profilepage {
+.container {
   margin-top: 30px;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
 }

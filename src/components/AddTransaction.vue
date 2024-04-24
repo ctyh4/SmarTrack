@@ -19,10 +19,14 @@ export default {
 <style scoped>
 #ATbutton {
   font-family: pjs;
+  font-size: 16px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
   position: absolute;
   border: transparent;
   top: 15px;
-  right: 100px;
+  right: 150px;
   background-color: #7f56d9;
   color: white;
   padding: 5px 10px;
@@ -30,6 +34,16 @@ export default {
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 10px;
+  width: 150px;
+  height: 40px;
+  text-decoration: none;
+}
+
+#icon {
+  width: 17px;
+  height: 17px;
+  margin-right: 1px;
+  margin-left: 7px;
 }
 
 button:hover {

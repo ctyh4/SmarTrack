@@ -1,6 +1,16 @@
 <template>
   <div class="budget-form">
-    <h2>How would you like to budget this month?</h2>
+    <h2>Would you like to add/edit your budget?</h2>
+    <div>
+      <label for="budget-month">Select Month: </label>
+      <select id="budget-month" v-model="selectedMonth">
+        <option disabled value="">Select a Month</option>
+        <option v-for="month in months" :key="month" :value="month">
+          {{ month }}
+        </option>
+      </select>
+      <br /><br />
+    </div>
     <div class="categories">
       <div class="category" v-for="category in categories" :key="category">
         <label>{{ category }}</label>
@@ -32,6 +42,21 @@ export default {
   name: "BudgetForm",
   data() {
     return {
+      selectedMonth: "",
+      months: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
       categories: [],
       budget: {
         Food: 0,
@@ -53,8 +78,12 @@ export default {
   },
   computed: {
     totalBudget() {
-      return Object.values(this.budget)
-        .reduce((total, amount) => total + amount, 0)
+      return this.categories
+        .reduce((total, category) => {
+          // Ensure each amount is treated as a number.
+          const amount = Number(this.budget[category]) || 0;
+          return total + amount;
+        }, 0)
         .toFixed(2);
     },
   },
@@ -84,32 +113,38 @@ export default {
     },
     async submitBudget() {
       try {
-        // const currentMonth = new Date().toLocaleString("default", {
-        // month: "long",
-        // });
-        // const currentYear = new Date().getFullYear().toString();
-        // const monthYearKey = `${currentMonth}-${currentYear}`;
-        const budgetData = [
-          {
-            Date: new Date(),
+        if (!this.selectedMonth) {
+          alert("Please select a month for the budget.");
+          return;
+        }
+
+        const budgetData = {
+          [this.selectedMonth]: {
             Food: this.budget.Food,
             Miscellaneous: this.budget.Miscellaneous,
-            Transport: this.budget.Transport,
             Retail: this.budget.Retail,
+            Transport: this.budget.Transport,
             Utilities: this.budget.Utilities,
+            Date: new Date().toISOString(), // Store the current timestamp
           },
-        ];
-        console.log(`Submitting budget data:`, budgetData);
-        const auth = getAuth();
-        const user = auth.currentUser;
+        };
 
-        const budgetDocRef = doc(db, "Users", user.email);
+        if (this.user) {
+          const budgetDocRef = doc(db, "Users", this.user.email);
 
-        await updateDoc(budgetDocRef, { Budgets: budgetData });
+          // Use setDoc with { merge: true } to update the budgets subfield without overwriting other fields
+          await updateDoc(budgetDocRef, {
+            [`Budgets.${this.selectedMonth}`]: budgetData[this.selectedMonth],
+          });
 
-        console.log(`Budget for ${currentMonth} saved successfully.`);
-        alert(`Budget for ${currentMonth} saved successfully.`);
-        this.resetForm();
+          console.log(`Budget for ${this.selectedMonth} saved successfully.`);
+          alert(`Budget for ${this.selectedMonth} saved successfully.`);
+          this.$emit("budget-saved");
+          this.resetForm();
+        } else {
+          console.error("User is not logged in.");
+          alert("You must be logged in to save your budget.");
+        }
       } catch (error) {
         console.error("Error submitting budget: ", error);
         alert("Error submitting budget.");

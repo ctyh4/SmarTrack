@@ -7,11 +7,11 @@
       <router-link to="/tracking/transactions">Transactions</router-link> |
       <router-link to="/tracking/budget">Budget</router-link>
     </div>
-      <h1>Analysis Page</h1>
+    <h1>Analysis Page</h1>
     <div class="grid-container">
-      <Bargraph /><br/>
-      <Linechart /><br/>
-      <BudgetVsActual /> <br/>
+      <Bargraph /><br />
+      <Linechart /><br />
+      <BudgetVsActual /> <br />
       <CashbackByCard />
     </div>
   </div>
@@ -37,7 +37,7 @@ export default {
     Bargraph,
     Linechart,
     BudgetVsActual,
-    CashbackByCard
+    CashbackByCard,
   },
   data() {
     return {
@@ -61,5 +61,6 @@ export default {
   width: 80%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 80px;
 }
 </style>

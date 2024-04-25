@@ -1,6 +1,6 @@
 <template>
     <div class="line-chart" >
-        <line-chart :data="chartData" :title="chartTitle" :colors="chartColors"></line-chart>
+        <line-chart :data="chartData" :title="chartTitle" :colors="chartColors" :library="{lineTension: 0}"></line-chart>
     </div>
 </template>
 

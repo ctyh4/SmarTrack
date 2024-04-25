@@ -7,11 +7,12 @@
       <router-link to="/tracking/transactions">Transactions</router-link> |
       <router-link to="/tracking/budget">Budget</router-link>
     </div>
-      <h1>Analysis Page</h1>
-    <div class="trackingpage">
-      <Bargraph /><br>
-      <Linechart />
-      <br />
+    <h1>Analysis Page</h1>
+    <div class="grid-container">
+      <Bargraph /><br />
+      <Linechart /><br />
+      <BudgetVsActual /> <br />
+      <CashbackByCard />
     </div>
   </div>
 </template>
@@ -21,6 +22,8 @@ import HomeButton from "@/components/HomeButton.vue";
 import Sidebar from "@/components/Sidebar.vue";
 import Bargraph from "@/components/Bargraph.vue";
 import Linechart from "@/components/Linechart.vue";
+import BudgetVsActual from "@/components/BudgetVsActual.vue";
+import CashbackByCard from "@/components/CashbackByCard.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -32,7 +35,9 @@ export default {
     HomeButton,
     Sidebar,
     Bargraph,
-    Linechart
+    Linechart,
+    BudgetVsActual,
+    CashbackByCard,
   },
   data() {
     return {
@@ -56,5 +61,6 @@ export default {
   width: 80%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 80px;
 }
 </style>

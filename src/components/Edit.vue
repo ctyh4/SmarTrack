@@ -17,7 +17,7 @@
 
 
       <button id="savebutton" type="button" @click="saveProfile(user)">Save</button><br>
-      <button id="cancelButton" type="button" @click="cancel()">Cancel</button>
+      <button id="cancelbutton" type="button" @click="cancel()">Cancel</button>
     </div>
   </div>
 </template>
@@ -110,7 +110,9 @@ export default {
     margin-left: auto;
     margin-right: auto;
 }
-#savebutton {
+#savebutton, #cancelbutton {
+  font-family: pjs;
   margin-bottom: 15px;
+  padding: 5px;
 }
 </style>

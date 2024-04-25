@@ -106,6 +106,11 @@ export default {
     margin-right: auto;
 }
 
+#editbutton {
+    font-family: pjs;
+    padding: 5px;
+}
+
 #nameCell, #useridCell, #emailCell {
     margin-bottom: 5px;
 }

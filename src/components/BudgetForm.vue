@@ -1,6 +1,16 @@
 <template>
   <div class="budget-form">
-    <h2>How would you like to budget this month?</h2>
+    <h2>Would you like to add/edit your budget?</h2>
+    <div>
+      <label for="budget-month">Select Month: </label>
+      <select id="budget-month" v-model="selectedMonth">
+        <option disabled value="">Select a Month</option>
+        <option v-for="month in months" :key="month" :value="month">
+          {{ month }}
+        </option>
+      </select>
+      <br /><br />
+    </div>
     <div class="categories">
       <div class="category" v-for="category in categories" :key="category">
         <label>{{ category }}</label>
@@ -11,7 +21,7 @@
       <label>Total: $</label>
       <span>{{ totalBudget }}</span>
     </div>
-    <button @click="submitBudget">Save</button>
+    <button id="savebutton" type="button" @click="submitBudget">Save</button>
   </div>
 </template>
 
@@ -22,6 +32,7 @@ import {
   updateDoc,
   getDocs,
   collection,
+  getDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
@@ -32,6 +43,21 @@ export default {
   name: "BudgetForm",
   data() {
     return {
+      selectedMonth: "",
+      months: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
       categories: [],
       budget: {
         Food: 0,
@@ -48,18 +74,51 @@ export default {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.user = user;
+        this.selectedMonth = new Date().toLocaleString("default", {
+          month: "long",
+        });
+        this.loadPreviousMonthBudget();
       }
     });
   },
   computed: {
     totalBudget() {
-      return Object.values(this.budget)
-        .reduce((total, amount) => total + amount, 0)
+      return this.categories
+        .reduce((total, category) => {
+          // Ensure each amount is treated as a number.
+          const amount = Number(this.budget[category]) || 0;
+          return total + amount;
+        }, 0)
         .toFixed(2);
     },
   },
 
   methods: {
+    getPreviousMonth() {
+      const today = new Date();
+      const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      return this.months[lastMonth.getMonth()];
+    },
+
+    // Method to load the previous month's budget
+    async loadPreviousMonthBudget() {
+      if (!this.user) return;
+      const previousMonth = this.getPreviousMonth();
+      try {
+        const userDocRef = doc(db, "Users", this.user.email);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
+          if (data.Budgets && data.Budgets[previousMonth]) {
+            this.previousMonthBudget = data.Budgets[previousMonth];
+            // Update the form with the previous month's budget
+            this.budget = { ...this.previousMonthBudget };
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching previous month's budget: ", error);
+      }
+    },
     resetForm() {
       this.budget = {
         Food: 0,
@@ -77,41 +136,45 @@ export default {
           //console.log(doc.id)
           this.categories.push(doc.id);
         });
-        console.log(this.categories)
+        console.log(this.categories);
       } catch (error) {
         console.error("Error getting categories: ", error);
       }
     },
     async submitBudget() {
       try {
-        
-        const currentMonth = new Date().toLocaleString("default", {
-        month: "long",
-        });
-        const currentYear = new Date().getFullYear().toString();
-        const monthYearKey = `${currentMonth}-${currentYear}`;
+        if (!this.selectedMonth) {
+          alert("Please select a month for the budget.");
+          return;
+        }
+
         const budgetData = {
-          [monthYearKey]: {
+          [this.selectedMonth]: {
             Food: this.budget.Food,
             Miscellaneous: this.budget.Miscellaneous,
-            Transport: this.budget.Transport,
             Retail: this.budget.Retail,
+            Transport: this.budget.Transport,
             Utilities: this.budget.Utilities,
+            Date: new Date().toISOString(), // Store the current timestamp
           },
         };
-        console.log(`Submitting budget data:`, budgetData);
-        const auth = getAuth();
-        const user = auth.currentUser;
 
-       
-        const budgetDocRef = doc(db, "Users", user.email);
+        if (this.user) {
+          const budgetDocRef = doc(db, "Users", this.user.email);
 
-        await updateDoc(budgetDocRef, { Budgets: budgetData });
+          // Use setDoc with { merge: true } to update the budgets subfield without overwriting other fields
+          await updateDoc(budgetDocRef, {
+            [`Budgets.${this.selectedMonth}`]: budgetData[this.selectedMonth],
+          });
 
-        console.log(`Budget for ${currentMonth} saved successfully.`);
-        alert(`Budget for ${currentMonth} saved successfully.`);
-        this.resetForm();
-        
+          console.log(`Budget for ${this.selectedMonth} saved successfully.`);
+          alert(`Budget for ${this.selectedMonth} saved successfully.`);
+          this.$emit("budget-saved");
+          this.resetForm();
+        } else {
+          console.error("User is not logged in.");
+          alert("You must be logged in to save your budget.");
+        }
       } catch (error) {
         console.error("Error submitting budget: ", error);
         alert("Error submitting budget.");
@@ -149,7 +212,20 @@ export default {
   font-weight: bold;
 }
 
-button {
-  /* Style your button accordingly */
+#savebutton {
+  font-family: pjs;
+  border: transparent;
+  background-color: #7f56d9;
+  color: white;
+  padding: 5px 10px;
+  margin: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+button:hover {
+  background-color: transparent;
+  opacity: 0.7;
 }
 </style>

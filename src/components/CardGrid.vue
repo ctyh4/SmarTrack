@@ -81,12 +81,21 @@ export default {
 .card-grid {
   display: grid;
   grid-template-columns: repeat(
-    auto-fit,
+    auto-fill,
     minmax(250px, 1fr)
   ); /* Adjust minmax to desired card width */
   gap: 1rem; /* Adjust the gap to your preference */
   padding: 1rem; /* Optional: adds some space inside the grid */
-  margin: 0 auto; /* Centers the grid horizontally */
-  max-width: 1200px; /* Optional: limits the width of the entire grid */
+  width: calc(100% - 2rem); /* take into account the padding */
+  box-sizing: border-box; /* include padding in the width calculation */
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* for larger screens, define the number of columns */
+  }
 }
 </style>

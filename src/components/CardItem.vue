@@ -91,7 +91,7 @@ export default {
 .learn-more-btn {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background-color: #007bff;
+  background-color: #7f56d9;
   color: white;
   border: none;
   border-radius: 5px;

@@ -1,6 +1,6 @@
 <template>
     <div class="bar-graph" >
-        <bar-chart :data="chartData" :title="chartTitle" :colors="chartColors" :horizontal="true"></bar-chart>
+        <pie-chart :data="chartData" :title="chartTitle" :colors="chartColors"></pie-chart>
     </div>
 </template>
 
@@ -18,8 +18,8 @@ export default {
         return {
             user: false,
             chartData: [],
-            chartTitle: 'Total Amount Spent by Card',
-            chartColors: ['#7f56d9']
+            chartTitle: 'Total Cashback Earned by Card',
+            chartColors: ['#7431c9', '#caa3fb', '#9c74d3', '#a358ff', '#62379a']
         }
     },
     mounted() {
@@ -43,16 +43,17 @@ export default {
                 // Step 1: Convert transactions to Card and amount
                 const transactionsByCard = transactions.map(transaction => {
                     const card = transaction.card; // Get Card 
-                    return { card, amount: transaction.amount };
+                    const cashback = transaction.cardCB || 0; // Set cashback to 0 if it's not present
+                    return { card, cashback };
                 });
                 console.log(transactionsByCard)
                 // Step 2: Group transactions by Card
                 const groupedTransactions = transactionsByCard.reduce((acc, transaction) => {
-                    const { card, amount } = transaction;
+                    const { card, cashback } = transaction;
                     if (!acc[card]) {
                         acc[card] = [];
                     }
-                    acc[card].push(amount);
+                    acc[card].push(cashback);
                     return acc;
                 }, {});
                 console.log(groupedTransactions)
@@ -60,7 +61,7 @@ export default {
                 const total = {};
                 for (const card in groupedTransactions) {
                     const transactions = groupedTransactions[card];
-                    const sum = transactions.reduce((acc, amount) => acc + amount, 0);
+                    const sum = transactions.reduce((acc, cashback) => acc + cashback, 0);
                     total[card] = sum;
                 }
                 console.log(total)

@@ -1,28 +1,32 @@
 <template>
   <sidebar @toggle="handleSidebarToggle" />
-  <div id="filter">
-    <FilterCard/> 
-  </div>
+  <div id="container">
+    <FilterCard id="filter" @update-filter="handleFilterUpdate" />
+  
     <div class="cards-page" v-if="user">
-      <SearchBar/><br />
         <div class="top-nav">
-            <HomeButton></HomeButton>
-            <!-- <button id="filter-button" type="button">Filters</button> -->
-            <button id="add-card-button" type="button" @click="showAddCardForm = true">
-              <img id = "icon" src = "./../assets/add_card_button.png">
+          <SearchBar @search="handleSearch" />
+            <button id="add-card-btn" type="button" @click="showAddCardForm = true">
               Add Card
+              <img id = "add-card-icon" src = "./../assets/add_card_button.png">
             </button>
-            <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
+            <AddCardForm id="add-card-form" :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
+            
+            <button id="liked-card-btn" type="button" @click="route">
+              Liked Cards
+              <img id = "liked-card-icon" src = "./../assets/liked_button.png">
+            </button>
+            <HomeButton/>
         </div>
-
-        <div class="inventory">
-          <div v-for="(cardName, index) in cards" :key="cardName" class="card">
-            <!-- <img id = "icon" src = "./../assets/${cardName}.png"> -->
-            <h3>{{ cardName }}</h3>
-            <button @click="deleteCard(cardName, index)" style="font-size: 14px;">Delete</button>
-          </div>
+        
+        <div class="cards-grid">
+          <CardInventory  
+          :cards="filteredCards" 
+          :userEmail="user.email"
+          @delete-card="deleteCard"/>
         </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -31,6 +35,7 @@ import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
 import AddCardForm from './AddCardForm.vue';
 import HomeButton from './HomeButton.vue';
+import CardInventory from './CardInventory.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from '../firebase.js';
 import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
@@ -43,28 +48,26 @@ export default {
     SearchBar,
     AddCardForm,
     HomeButton,
+    CardInventory,
   },
   data() {
     return {
-      user:null,
+      user: null,
       sidebarActive: false,
       showAddCardForm: false,
       cards: [],
-      // imageUrl: SmarTrack,
+      filteredCards: [],
     };
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged (auth, user => {  
+    onAuthStateChanged (auth, (user) => {  
       if (user) {
         this.user = user;
         this.fetchCards(user);
       }
     })
   },
-  // created() {
-  //   this.setImageUrl(this.card.id); 
-  // },
   methods: {
     handleSidebarToggle(isActive) {
       this.sidebarActive = isActive;
@@ -90,13 +93,13 @@ export default {
         console.error("Error fetching user cards:", error);
       }
     },
-    async addCard(cardName) {
+    async addCard(card) {
       try {
-        const userDocRef = doc(db, "Users", String(user.email));
+        const userDocRef = doc(db, "Users", this.user.email);
         await updateDoc(userDocRef, {
-          Inventory: arrayUnion(cardName),
+          Inventory: arrayUnion(card),
         });
-        this.cards.push(cardName);
+        this.cards.push(card);
         console.log(this.cards);
         this.showAddCardForm = false; //Close Add Card Form
         this.$router.push("/cards");
@@ -107,7 +110,7 @@ export default {
     async deleteCard(cardName, index) {
       try {
         // Confirm with the user that they want to delete the card
-        if (!confirm(`Are you sure you want to delete the card "${cardName}"?`)) {
+        if (!confirm(`Are you sure you want to delete the card "${cardName}" from your inventory?`)) {
           return;
         }
 
@@ -122,184 +125,135 @@ export default {
             Inventory: updatedInventory,
           });
 
-          // Remove the card from the local state
+          // Remove the card from local state
           this.cards.splice(index, 1);
+          console.log("Deleted", {cardName});
+          this.$router.push("/cards");
         }
       } catch (error) {
         console.error("Error deleting card:", error);
       }
     },
-    async setImageUrl(cardId) {
-      try {
-        const image = await import(`@/assets/${cardId}.webp`);
-        this.imageUrl = image.default; // Update the data property with the loaded image
-      } catch (e) {
-        console.error(e);
-        this.imageUrl = SmarTrack; // Fallback if the image fails to load
-      }
+    async route() {
+      this.$router.push("/liked");
+    },
+    handleSearch(searchTerm) {
+      this.$refs.cardGrid.updateSearch(searchTerm);
+      // this.filteredCards = this.cards.filter(card =>
+      //   card.name.toLowerCase().includes(searchTerm.toLowerCase())
+      // );
+    },
+    handleFilterUpdate({ minCashback, maxAnnualFee }) {
+      console.log("handling filter update");
+      this.$refs.cardGrid.updateFilter({ minCashback, maxAnnualFee });
+      // this.filteredCards = this.cards.filter(card =>
+      //   card.cashback >= minCashback && card.annualFee <= maxAnnualFee
+      // );
     },
   },
 }
 </script>
 
 <style scoped>
+#container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Center children horizontally */
+  align-items: flex-start; /* Align children to the top */
+  padding-top: 20px;
+}
+
 #filter {
   margin-left: 150px;
-  margin-top: 20px;
+  height: 300px;
+  width: 200px;
 }
 
 .cards-page {
-    text-align: center;
-    align-items: center;
-    margin: auto;
+  width: calc(100% - 270px);
+  max-width: 1100px;
+  margin-left: 25px;
+  flex-grow: 1;
 }
 
 .top-nav {
-  overflow: hidden;
   text-align: center;
   align-items: center;
-  margin: auto;
-  margin-top: 20px;
+  display: flex;
   color: #7F56D9;
 }
 
-/* Style the links inside the navigation bar */
-.top-nav a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-/* Change the color of links on hover */
-.top-nav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* Style the "active" element to highlight the current page */
-.top-nav a.active {
-  background-color: #2196F3;
-  color: white;
-}
-
-/* Style the search box inside the navigation bar */
-.search-bar input[type=text] {
-  float: right;
-  padding: 6px;
-  border: none;
-  margin: auto;
-  margin-top: 8px;
-  font-size: 15px;
-  font-family: pjs;
-  width: 400px;
-}
-
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-@media screen and (max-width: 600px) {
-  .top-nav a, .top-nav input[type=text] {
-    float: none;
-    display: block;
-    text-align: left;
-    width: 100%;
-    margin: 0;
-    padding: 14px;
-  }
-  .top-nav input[type=text] {
-    border: 1px solid #ccc;
-  }
-}
-
-#home-button, #filter-button {
-    top: 25px;
-    right: 10px;
-    background-color: #7F56D9;
+#add-card-btn {
+    display: flex;
+    height: 40px;
+    width: 130px;
+    top: 28px;
+    right: 125px;
+    position: absolute;
     font-family: pjs;
-    font-weight: 600;
-    font-size: 15px;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    margin: 4px 2px;
-    cursor: pointer;
-    width: 80px;
-    border-radius: 5px;
-}
-
-#add-card-button {
-    top: 25px;
-    right: 10px;
-    font-family: pjs;
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 650;
+    font-size: 16px;
     color: #7F56D9;
+    background-color: white;
     padding: 5px 10px;
     text-align: center;
-    margin: 4px 2px;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    width: 100px;
-    border-radius: 5px;
+    border-radius: 10px;
     border-style: solid;
     border-color: #7F56D9;
 }
 
-#home-button {
-    position: absolute;
-}
-
-.search-bar-container {
+#liked-card-btn {
     display: flex;
-    flex-direction: column;
+    height: 40px;
+    width: 150px;
+    top: 28px;
+    right: 265px;
+    position: absolute;
+    font-family: pjs;
+    font-weight: 650;
+    font-size: 16px;
+    color: #7F56D9;
+    background-color: white;
+    padding: 5px 10px;
+    text-align: center;
     align-items: center;
-    margin: 20px;
-}
- 
-#search-bar {
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    width: 50%;
-    box-sizing: border-box;
-}
- 
-#list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #7F56D9;
 }
 
-.inventory {
+#add-card-icon {
+  width: 17px;
+  height: 17px;
+  margin-left: 7px;
+}
+
+#liked-card-icon {
+  width: 20px;
+  height: 17px;
+  margin-left: 7px;
+}
+
+.cards-grid {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   text-align: center;
-  margin: auto;
-  width: 700px;
+  justify-content: center;
+  width: 800px;
   height: 50%;
 }
- 
-.cards {
-    font-size: 1.2em;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    animation: fadeIn 0.5s ease-in-out;
-}
- 
-.cards:last-child {
-    border-bottom: none;
-}
- 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
- 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+
+#delete-icon {
+  width: 25px;
+  border: transparent;
+  background-color: white;
+  cursor: pointer;
 }
 
 .pushMainContent {

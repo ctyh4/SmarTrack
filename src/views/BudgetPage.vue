@@ -1,7 +1,7 @@
 <template v-if="user">
   <Sidebar />
   <HomeButton />
-  <div v-if="user">
+  <div class="container" v-if="user">
     <div>
       <router-link to="/tracking/analysis">Analysis</router-link> |
       <router-link to="/tracking/transactions">Transactions</router-link> |
@@ -13,7 +13,11 @@
     </div>
     <div>
       <SpendingPie />
-      <BudgetForm />
+      <br />
+
+      <BudgetTable ref="budgetTable" />
+      <br />
+      <BudgetForm @budget-saved="refreshBudgets" />
     </div>
   </div>
 </template>
@@ -22,6 +26,7 @@
 import HomeButton from "@/components/HomeButton.vue";
 import SpendingPie from "@/components/SpendingPie.vue";
 import BudgetForm from "@/components/BudgetForm.vue";
+import BudgetTable from "@/components/BudgetTable.vue";
 import Sidebar from "@/components/Sidebar.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
@@ -34,6 +39,7 @@ export default {
     HomeButton,
     Sidebar,
     BudgetForm,
+    BudgetTable,
     SpendingPie,
   },
   data() {
@@ -49,12 +55,18 @@ export default {
       }
     });
   },
+  methods: {
+    refreshBudgets() {
+      this.$refs.budgetTable.getBudgets();
+    },
+  },
 };
 </script>
 
 <style scoped>
-.profilepage {
+.container {
   margin-top: 30px;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
 }

@@ -164,9 +164,11 @@
   }
   
   .cards-page {
-    margin-left: 25px;
-    flex-grow: 1;
-  }
+  width: calc(100% - 270px);
+  max-width: 1100px;
+  margin-left: 25px;
+  flex-grow: 1;
+}
   
   .top-nav {
     text-align: center;
@@ -204,18 +206,14 @@
   }
   
   .cards-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    margin: auto;
-    margin-top: 10px;
-    width: 800px;
-    height: 50%;
-    scroll-behavior: smooth;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: 800px;
+  height: 50%;
+}
   
   #delete-icon {
     width: 25px;

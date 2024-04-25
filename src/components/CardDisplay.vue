@@ -66,7 +66,6 @@ export default {
   width: 100%;
   overflow: hidden;
   background: #fff;
-  margin-bottom: 1rem;
 }
 
   .card-display {

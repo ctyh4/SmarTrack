@@ -125,8 +125,7 @@ const db = getFirestore(firebaseApp);
   <style scoped>
   .cards-grid {
     display: grid;
-    padding: 20px;
-    gap: 1rem;
+    margin-left: -100px;
     scroll-behavior: smooth;
   }
 </style>

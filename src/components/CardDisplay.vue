@@ -5,9 +5,9 @@
             <img :src="imageUrl" :alt="card.id" class="card-image" />
         </div>
 
-      <div class="card-details">
-        <h2 class="card-title">{{ card }}</h2>
-      </div>
+      <button class="card-details">
+        <h2 class="card-title" @click="learnMore(card)">{{ card }}</h2>
+      </button>
 
       <button class = "delete-btn" @click="deleteCard" style="font-size: 14px;">
             <img class = "delete-icon" src = "./../assets/delete_button.png">
@@ -39,6 +39,12 @@ export default {
         if (confirm(`Are you sure you want to delete the card "${this.card}"?`)) {
         this.$emit('delete-card', this.card, this.index);
       }
+    },
+    learnMore(cardId) {
+      this.$router.push({
+        name: "Indv Card",
+        params: { cardId: cardId },
+      });
     },
       async setImageUrl(cardId) {
       try {
@@ -105,9 +111,14 @@ export default {
 }
   
   .card-details {
-    padding: 10px;
-    text-align: center;
+    padding: 20px;
+    font-family: pjs;
+    font-size: 20px;
+    text-align: left;
     width: 500px;
+    background-color: white;
+    border: transparent;
+    cursor: pointer;
   }
   
   .card-title {

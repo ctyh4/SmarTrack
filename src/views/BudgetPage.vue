@@ -14,6 +14,7 @@
     <div>
       <SpendingPie />
       <br />
+
       <BudgetTable ref="budgetTable" />
       <br />
       <BudgetForm @budget-saved="refreshBudgets" />

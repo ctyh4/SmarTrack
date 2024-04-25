@@ -32,6 +32,7 @@ import {
   updateDoc,
   getDocs,
   collection,
+  getDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
@@ -73,6 +74,10 @@ export default {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.user = user;
+        this.selectedMonth = new Date().toLocaleString("default", {
+          month: "long",
+        });
+        this.loadPreviousMonthBudget();
       }
     });
   },
@@ -89,6 +94,31 @@ export default {
   },
 
   methods: {
+    getPreviousMonth() {
+      const today = new Date();
+      const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      return this.months[lastMonth.getMonth()];
+    },
+
+    // Method to load the previous month's budget
+    async loadPreviousMonthBudget() {
+      if (!this.user) return;
+      const previousMonth = this.getPreviousMonth();
+      try {
+        const userDocRef = doc(db, "Users", this.user.email);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
+          if (data.Budgets && data.Budgets[previousMonth]) {
+            this.previousMonthBudget = data.Budgets[previousMonth];
+            // Update the form with the previous month's budget
+            this.budget = { ...this.previousMonthBudget };
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching previous month's budget: ", error);
+      }
+    },
     resetForm() {
       this.budget = {
         Food: 0,

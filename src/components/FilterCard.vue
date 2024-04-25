@@ -112,7 +112,7 @@ export default {
 .clear-btn {
   background: none;
   border: none;
-  color: #007bff;
+  color: #7f56d9;
   cursor: pointer;
 }
 
@@ -148,7 +148,7 @@ export default {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #007bff;
+  background: #7f56d9;
   cursor: pointer;
 }
 
@@ -156,7 +156,7 @@ export default {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #007bff;
+  background: #7f56d9;
   cursor: pointer;
 }
 

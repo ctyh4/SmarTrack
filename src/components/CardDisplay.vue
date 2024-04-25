@@ -72,7 +72,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 100%;
+    width: 800px;
     height: 130px;
     justify-content: space-between;
     padding: 1rem;
@@ -124,7 +124,6 @@ export default {
     font-size: 20px;
     align-items: center;
     justify-content: flex-start;
-    margin-left: 10px;
     left: 10px;
   }
   

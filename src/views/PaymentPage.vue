@@ -43,7 +43,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .paymentrecopage {
     margin-top: 30px;
     margin-left: auto;

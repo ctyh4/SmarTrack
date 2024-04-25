@@ -91,7 +91,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .edit-profile-container {
   font-family: pjs;
   text-align: center;

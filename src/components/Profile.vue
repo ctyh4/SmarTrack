@@ -93,7 +93,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .profile-container {
     font-family: pjs;
     text-align: center;
@@ -104,6 +104,11 @@ export default {
     flex-direction: column;
     margin-left: auto;
     margin-right: auto;
+}
+
+#editbutton {
+    font-family: pjs;
+    padding: 5px;
 }
 
 #nameCell, #useridCell, #emailCell {

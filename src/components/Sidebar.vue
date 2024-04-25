@@ -1,7 +1,7 @@
 <template>
   <div v-if="user">
     <div class="sidebar-container">
-      <div id="mySidenav" class="sidenav" :class="{ 'openNavClass': isActive }">
+      <div id="mySidenav" class="sidenav" :class="{ openNavClass: isActive }">
         <a class="closebtn" @click="toggleNav">&times;</a>
 
         <div id="tabs">
@@ -16,7 +16,7 @@
       
       <div id="main" :class="{ 'pushMainContent': isActive }">
         <span style="font-size: 30px; cursor: pointer;" @click="toggleNav">&#9776;</span>
-        <span style = "cursor: pointer; font-family: pjs; font-weight: bold; font-size: 20px; margin-left: 9px; margin-top: 9px;" 
+        <span style = "cursor: pointer; font-family: pjs; font-weight: 700; font-size: 20px; margin-left: 9px; margin-top: 9px;" 
            @click="toggleNav">
            {{ pageName }}
           </span>
@@ -55,17 +55,17 @@
     methods: {
       toggleNav() {
         this.isActive =!this.isActive;  
-        this.$emit('toggle', this.isActive); // Emitting an event named 'toggle'    
+        this.$emit('toggle', this.isActive); // Emitting event named 'toggle'    
       },
     }
   };
   </script>
       
-  <style>
+  <style scoped>
   .sidebar-container {
     display: flex;
     height: 100vh;
-    position: absolute; /* Places home menu div over entire page div */
+    position: absolute; /* Places sidebar over entire page div */
   }
   
   .page-router {
@@ -76,7 +76,11 @@
   }
   
   #tabs {
-    margin-top: 50px;
+    margin-top: 55px;
+    margin-right: 20px;
+    font-family: pjs;
+    font-weight: 650;
+    font-size: 40px;
   }
   .sidenav {
     height: 100vh;
@@ -86,8 +90,11 @@
     left: 0;
     background-color: black;
     overflow-x: hidden; /* Prevents content from spilling out of page */
-    transition: width 0.3s linear; /* Smooth linear transition for the width */
+    transition: width 0.3s linear; /* Smooth linear transition over the width */
     padding-top: 0px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
   }
       
   .openNavClass {
@@ -107,7 +114,7 @@
   .pushMainContent {
     margin-left: 250px; /* Push main content to the right by 250px when sidebar opens */
     transition: 0.3s linear;
-}
+  }
       
   .sidenav a {
     padding: 8px 8px 8px 32px;
@@ -127,7 +134,7 @@
       
   .sidenav .closebtn {
     position: absolute;
-    margin-top: 0px;
+    margin-top: 10px;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;

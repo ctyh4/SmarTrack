@@ -5,8 +5,9 @@ import Edit from "@/components/Edit.vue";
 import Login from "@/components/Login.vue";
 import NotFound from "@/views/NotFoundPage.vue";
 import CardsPage from "@/views/CardsPage.vue";
+import LikedPage from "@/views/LikedPage.vue";
 import IndvCard from "@/views/IndvCardPage.vue";
-import Discovery from "@/views/DiscoveryView.vue";
+
 import CompareCard from "@/views/CompareCardsPage.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import DiscoveryView from "@/views/DiscoveryView.vue";
@@ -43,7 +44,7 @@ const routes = [
     component: IndvCard,
   },
   {
-    path: "/ompare",
+    path: "/compare",
     name: "Compare Card",
     component: CompareCard,
   },
@@ -56,6 +57,11 @@ const routes = [
     path: "/cards",
     name: "Cards",
     component: CardsPage,
+  },
+  {
+    path: "/liked",
+    name: "Liked Cards",
+    component: LikedPage,
   },
   {
     path: "/Payment",

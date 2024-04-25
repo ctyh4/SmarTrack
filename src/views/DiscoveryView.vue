@@ -1,7 +1,7 @@
 <template>
   <sidebar></sidebar>
   <div>
-    <FilterCard @update-filter="handleFilterUpdate" />
+    <FilterCard id="filter" @update-filter="handleFilterUpdate" />
   </div>
 
   <div class="discoverypage" v-if="user">
@@ -55,3 +55,12 @@ export default {
   },
 };
 </script>
+
+
+<style>
+#filter {
+  margin-top: 20px;
+  margin-left: 180px;
+  width: 200px;
+}
+</style>

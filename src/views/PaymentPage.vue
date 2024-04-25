@@ -1,10 +1,10 @@
 <template v-if="user">
     <Sidebar/>
     <HomeButton/>
-    <PaymentForm/>
+   
     <div class="paymentrecopage">
       <br>
-      <Logout />
+      <PaymentForm/>
     </div>
   </template>
     
@@ -23,7 +23,6 @@
       name: "PaymentPage",
       components: {
           PaymentForm, 
-          Logout,
           HomeButton,
           Sidebar,
       },
@@ -45,7 +44,7 @@
   </script>
   
   <style>
-  .profilepage {
+  .paymentrecopage {
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;

@@ -5,7 +5,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 #backButton {
   background: none;
   border: transparent;

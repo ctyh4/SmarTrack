@@ -165,8 +165,8 @@ export default {
 
 #filter {
   margin-left: 150px;
-  margin-top: 20px;
   height: 300px;
+  width: 200px;
 }
 
 .cards-page {
@@ -242,12 +242,9 @@ export default {
 .cards-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   align-items: center;
   text-align: center;
   justify-content: center;
-  margin: auto;
-  margin-top: 10px;
   width: 800px;
   height: 50%;
 }

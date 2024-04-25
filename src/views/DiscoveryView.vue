@@ -1,7 +1,8 @@
 <template>
-  <sidebar></sidebar>
-  <div>
-    <FilterCard id="filter" @update-filter="handleFilterUpdate" />
+  <Sidebar />
+  <HomeButton />
+  <div id="filter">
+    <FilterCard @update-filter="handleFilterUpdate" />
   </div>
 
   <div class="discoverypage" v-if="user">
@@ -13,6 +14,7 @@
 
 <script>
 import Sidebar from "@/components/Sidebar.vue";
+import HomeButton from "@/components/HomeButton.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
@@ -29,7 +31,8 @@ export default {
     SearchBar,
     CardGrid,
     Logout,
-    sidebar: Sidebar,
+    Sidebar,
+    HomeButton,
   },
   data() {
     return {
@@ -56,11 +59,15 @@ export default {
 };
 </script>
 
-
-<style>
+<style scoped>
 #filter {
+  margin-left: 175px;
   margin-top: 20px;
-  margin-left: 180px;
-  width: 200px;
+  width: 400px;
+}
+.discoverypage {
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

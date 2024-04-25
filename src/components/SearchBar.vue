@@ -38,7 +38,6 @@ export default {
 
 <style scoped>
 .search-container {
-  top: 20px;
   position: relative;
   width: 100%; /* Adjust width as needed */
   max-width: 400px; /* Maximum width of the search bar */

@@ -1,9 +1,8 @@
 <template>
   <div>
     <button id="homebutton" type="button" @click="this.$router.push('/home')">
-      
       Home
-      <img id = "icon" src = "./../assets/home_button.png">
+      <img id="icon" src="./../assets/home_button.png" />
     </button>
   </div>
 </template>
@@ -34,6 +33,7 @@
 #icon {
   width: 17px;
   height: 17px;
+  margin-right: 1px;
   margin-left: 7px;
 }
 

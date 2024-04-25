@@ -5,7 +5,7 @@
     
       <div class="cards-page" v-if="user">
           <div class="top-nav">
-            <SearchBar @search="handleSearch" />
+            <SearchBar id="search-bar" @search="handleSearch" />
               <button id="card-btn" type="button" @click="route">
                 Cards
                 <img id = "card-icon" src = "./../assets/cards_button.png">
@@ -158,9 +158,9 @@
 }
   
   #filter {
-    margin-left: 150px;
-    margin-top: 20px;
+    margin-left: 140px;
     height: 300px;
+    width: 200px;
   }
   
   .cards-page {

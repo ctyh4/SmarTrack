@@ -2,43 +2,55 @@
   <sidebar @toggle="handleSidebarToggle" />
   <div id="container">
     <FilterCard id="filter" @update-filter="handleFilterUpdate" />
-  
+
     <div class="cards-page" v-if="user">
-        <div class="top-nav">
-          <SearchBar @search="handleSearch" />
-            <button id="add-card-btn" type="button" @click="showAddCardForm = true">
-              Add Card
-              <img id = "add-card-icon" src = "./../assets/add_card_button.png">
-            </button>
-            <AddCardForm id="add-card-form" :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
-            
-            <button id="liked-card-btn" type="button" @click="route">
-              Liked Cards
-              <img id = "liked-card-icon" src = "./../assets/liked_button.png">
-            </button>
-            <HomeButton/>
-        </div>
-        
-        <div class="cards-grid">
-          <CardInventory  
-          :cards="filteredCards" 
+      <div class="top-nav">
+        <SearchBar @search="handleSearch" />
+        <button id="add-card-btn" type="button" @click="showAddCardForm = true">
+          Add Card
+          <img id="add-card-icon" src="./../assets/add_card_button.png" />
+        </button>
+        <AddCardForm
+          :isVisible="showAddCardForm"
           :userEmail="user.email"
-          @delete-card="deleteCard"/>
-        </div>
+          @confirmed="fetchCards"
+        />
+
+        <button id="liked-card-btn" type="button" @click="route">
+          Liked Cards
+          <img id="liked-card-icon" src="./../assets/liked_button.png" />
+        </button>
+        <HomeButton />
+      </div>
+
+      <div class="cards-grid">
+        <CardInventory
+          :key="componentKey"
+          :cards="filteredCards"
+          :userEmail="user.email"
+          @delete-card="fetchCards"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue';
+import Sidebar from "@/components/Sidebar.vue";
 import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
-import AddCardForm from './AddCardForm.vue';
-import HomeButton from './HomeButton.vue';
-import CardInventory from './CardInventory.vue';
+import AddCardForm from "./AddCardForm.vue";
+import HomeButton from "./HomeButton.vue";
+import CardInventory from "./CardInventory.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import firebaseApp from '../firebase.js';
-import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import firebaseApp from "../firebase.js";
+import {
+  getFirestore,
+  updateDoc,
+  doc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const db = getFirestore(firebaseApp);
 
 export default {
@@ -57,16 +69,17 @@ export default {
       showAddCardForm: false,
       cards: [],
       filteredCards: [],
+      componentKey: null,
     };
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged (auth, (user) => {  
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         this.user = user;
         this.fetchCards(user);
       }
-    })
+    });
   },
   methods: {
     handleSidebarToggle(isActive) {
@@ -74,7 +87,7 @@ export default {
     },
     async fetchCards(user) {
       try {
-        const userEmail = String(user.email);
+        const userEmail = String(this.user.email);
         console.log(userEmail);
 
         const docRef = doc(db, "Users", userEmail);
@@ -85,10 +98,11 @@ export default {
         if (docSnap.exists() && docSnap.data().Inventory) {
           const userData = docSnap.data();
           this.cards = userData.Inventory;
-          console.log(this.cards); 
+          console.log(this.cards);
         } else {
           console.log("No inventory found or no such document!");
         }
+        this.showAddCardForm = false;
       } catch (error) {
         console.error("Error fetching user cards:", error);
       }
@@ -100,17 +114,24 @@ export default {
           Inventory: arrayUnion(card),
         });
         this.cards.push(card);
+        this.fetchCards();
         console.log(this.cards);
         this.showAddCardForm = false; //Close Add Card Form
-        this.$router.push("/cards");
       } catch (error) {
         console.error("Error updating profile:", error);
-      } 
+      }
+      this.fetchCards();
+      this.componentKey = new Date().getTime();
     },
+    /*
     async deleteCard(cardName, index) {
       try {
         // Confirm with the user that they want to delete the card
-        if (!confirm(`Are you sure you want to delete the card "${cardName}" from your inventory?`)) {
+        if (
+          !confirm(
+            `Are you sure you want to delete the card "${cardName}" from your inventory?`
+          )
+        ) {
           return;
         }
 
@@ -120,20 +141,22 @@ export default {
         const docSnap = await getDoc(userDocRef);
 
         if (docSnap.exists() && docSnap.data().Inventory) {
-          const updatedInventory = docSnap.data().Inventory.filter(item => item !== cardName);
+          const updatedInventory = docSnap
+            .data()
+            .Inventory.filter((item) => item !== cardName);
           await updateDoc(userDocRef, {
             Inventory: updatedInventory,
           });
 
           // Remove the card from local state
           this.cards.splice(index, 1);
-          console.log("Deleted", {cardName});
-          this.$router.push("/cards");
+          console.log("Deleted", { cardName });
+          this.fetchCards();
         }
       } catch (error) {
         console.error("Error deleting card:", error);
       }
-    },
+    }, */
     async route() {
       this.$router.push("/liked");
     },
@@ -151,7 +174,7 @@ export default {
       // );
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -180,51 +203,51 @@ export default {
   text-align: center;
   align-items: center;
   display: flex;
-  color: #7F56D9;
+  color: #7f56d9;
 }
 
 #add-card-btn {
-    display: flex;
-    height: 40px;
-    width: 130px;
-    top: 28px;
-    right: 125px;
-    position: absolute;
-    font-family: pjs;
-    font-weight: 650;
-    font-size: 16px;
-    color: #7F56D9;
-    background-color: white;
-    padding: 5px 10px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: #7F56D9;
+  display: flex;
+  height: 40px;
+  width: 130px;
+  top: 28px;
+  right: 125px;
+  position: absolute;
+  font-family: pjs;
+  font-weight: 650;
+  font-size: 16px;
+  color: #7f56d9;
+  background-color: white;
+  padding: 5px 10px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: #7f56d9;
 }
 
 #liked-card-btn {
-    display: flex;
-    height: 40px;
-    width: 150px;
-    top: 28px;
-    right: 265px;
-    position: absolute;
-    font-family: pjs;
-    font-weight: 650;
-    font-size: 16px;
-    color: #7F56D9;
-    background-color: white;
-    padding: 5px 10px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: #7F56D9;
+  display: flex;
+  height: 40px;
+  width: 150px;
+  top: 28px;
+  right: 265px;
+  position: absolute;
+  font-family: pjs;
+  font-weight: 650;
+  font-size: 16px;
+  color: #7f56d9;
+  background-color: white;
+  padding: 5px 10px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: #7f56d9;
 }
 
 #add-card-icon {

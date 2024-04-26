@@ -6,56 +6,66 @@
       <button id="delete-button">x</button>
       <h2>Add Card</h2>
 
-        <div class="label">Card Name</div>
-          <select id="cardName1" v-model="selected">
-            <option id="option" value="" disabled selected>Select Card Name</option>
-            <option>Citi Cash Back+ Mastercard</option>
-            <option>DBS Visa Debit Card</option>
-            <option>OCBC Debit Card</option>
-            <option>Standard Chartered Simply Cash Credit Card</option>
-            <option>UOB One Card</option>
-          </select> 
-          <br><br>
+      <div class="label">Card Name</div>
+      <select id="cardName1" v-model="selected">
+        <option id="option" value="" disabled selected>Select Card Name</option>
+        <option>Citi Cash Back+ Mastercard</option>
+        <option>DBS Visa Debit Card</option>
+        <option>OCBC Debit Card</option>
+        <option>Standard Chartered Simply Cash Credit Card</option>
+        <option>UOB One Card</option>
+      </select>
+      <br /><br />
 
       <div class="confirm">
-        <button id = "confirm-button" type = "button" v-on:click="confirm">Confirm</button>
+        <button id="confirm-button" type="button" v-on:click="confirm">
+          Confirm
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import firebaseApp from '../firebase.js';
+import firebaseApp from "../firebase.js";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import {
+  getFirestore,
+  updateDoc,
+  doc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const db = getFirestore(firebaseApp);
 
 export default {
   data() {
     return {
       user: null,
-      cardName1: '',
-      selected: '',
+      cardName1: "",
+      selected: "",
     };
   },
   props: {
     isVisible: Boolean,
     userEmail: String,
   },
+  emits: ["confirmed"],
   mounted() {
-        const auth = getAuth();
-        onAuthStateChanged (auth, user => {  
-            if (user) {
-                this.user = user;
-            }
-        })
-    },
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.user = user;
+      }
+    });
+  },
   methods: {
     async confirm() {
       if (!this.selected) {
         alert("Please select a card name.");
         return;
-      } try {
+      }
+      try {
         const userDocRef = doc(db, "Users", this.user.email);
         console.log(userDocRef);
 
@@ -63,17 +73,16 @@ export default {
         if (docSnap.exists()) {
           await updateDoc(userDocRef, {
             Inventory: arrayUnion(this.selected),
-          })
-          alert("Confirming your data for card: " + this.selected)
+          });
+          alert("Confirming your data for card: " + this.selected);
           this.$emit("confirmed", this.selected);
           console.log("Added", this.selected);
-          this.$router.push("/cards");
         }
-      } catch(error) {
+      } catch (error) {
         console.error("Error adding card: ", error);
       }
     },
-  }
+  },
 };
 </script>
 
@@ -86,25 +95,25 @@ export default {
   padding: 20px;
   width: 400px;
   background-color: white;
-  border-color: #7F56D9;
+  border-color: #7f56d9;
   border: 2px;
   border-style: solid;
   border-radius: 20px;
   position: fixed;
-  top: 45%; 
-  left: 51%; 
-  transform: translate(-50%, -50%); 
+  top: 45%;
+  left: 51%;
+  transform: translate(-50%, -50%);
   z-index: 1000;
 }
 
 #delete-button {
   position: absolute;
   font-size: 20px;
-  color:rgb(95, 93, 93);
+  color: rgb(95, 93, 93);
   top: 10px;
   right: 10px;
-  background: transparent; 
-  border: none; 
+  background: transparent;
+  border: none;
   cursor: pointer;
 }
 
@@ -140,8 +149,8 @@ select {
   margin-top: 4px;
   margin-bottom: 10px;
   color: white;
-  background-color: #7F56D9;
-  border-color: #7F56D9;
+  background-color: #7f56d9;
+  border-color: #7f56d9;
   width: 100px;
   height: 35px;
   border-radius: 5px;

@@ -68,11 +68,6 @@ import Sidebar from "@/components/Sidebar.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
-  data() {
-    return {
-      user: false,
-    };
-  },
   mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
@@ -86,6 +81,7 @@ export default {
   },
   data() {
     return {
+      user: false,
       sidebarActive: false,
     };
   },

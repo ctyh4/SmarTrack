@@ -1,25 +1,22 @@
 <template>
- 
-    <Home />
+  <Home v-if="user" />
   <!-- <Logout /> -->
-
-  
 </template>
 <script>
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc,getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import Home from "@/components/Home.vue";
 import Logout from "@/components/Logout.vue";
-import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
 export default {
   name: "App",
   components: {
-    Home, 
+    Home,
     /* Logout
-    */
+     */
   },
   data() {
     return {
@@ -28,12 +25,12 @@ export default {
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged(auth,(user)=> {
-      if (user){
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
         this.user = user;
         this.storeFS(user);
       }
-    })
+    });
   },
   methods: {
     change() {
@@ -44,26 +41,26 @@ export default {
       console.log(docRef);
       // Fetch the document data
       const docSnap = await getDoc(docRef);
-      if(!docSnap.exists()) {
+      if (!docSnap.exists()) {
         setDoc(doc(db, "Users", String(user.email)), {
-        Name: user.displayName,
-        Email: user.email,
-        UID: user.uid,
-        Liked: [],
-        Inventory: [],
-        CardsWithMinSpend: {},
-        CardsWithCBCap: {},
-        Transactions: []
-      })
-      .then(() => {
-        console.log("User data stored in Firestore successfully");
-      })
-      .catch(error => {
-        console.error("Error storing user data in Firestore:", error);
-      });
+          Name: user.displayName,
+          Email: user.email,
+          UID: user.uid,
+          Liked: [],
+          Inventory: [],
+          CardsWithMinSpend: {},
+          CardsWithCBCap: {},
+          Transactions: [],
+        })
+          .then(() => {
+            console.log("User data stored in Firestore successfully");
+          })
+          .catch((error) => {
+            console.error("Error storing user data in Firestore:", error);
+          });
       }
     },
-  }
+  },
 };
 </script>
 

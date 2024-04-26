@@ -1,5 +1,4 @@
 <template>
-  <sidebar @toggle="handleSidebarToggle" />
   <div id="container">
     <FilterCard id="filter" @update-filter="handleFilterUpdate" />
   
@@ -10,7 +9,7 @@
               Add Card
               <img id = "add-card-icon" src = "./../assets/add_card_button.png">
             </button>
-            <AddCardForm id="add-card-form" :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" />
+            <AddCardForm id="add-card-form" :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" @close-form="showAddCardForm = false" />
             
             <button id="liked-card-btn" type="button" @click="route">
               Liked Cards

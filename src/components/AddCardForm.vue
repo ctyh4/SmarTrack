@@ -3,7 +3,7 @@
 
   <div class="container" v-show="isVisible">
     <form class="myform">
-      <button id="delete-button">x</button>
+      <button id="delete-button" @click="closeForm">x</button>
       <h2>Add Card</h2>
 
         <div class="label">Card Name</div>
@@ -72,6 +72,9 @@ export default {
       } catch(error) {
         console.error("Error adding card: ", error);
       }
+    },
+    closeForm() {
+      this.$emit('close-form');
     },
   }
 };

@@ -16,7 +16,7 @@
 import CardDisplay from './CardDisplay.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseApp from "../firebase.js";
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, getDocs } from "firebase/firestore";
 const db = getFirestore(firebaseApp);
   
   export default {
@@ -55,6 +55,12 @@ const db = getFirestore(firebaseApp);
 
         const docRef = doc(db, "Users", userEmail);
         console.log(docRef);
+
+        // const querySnapshot = await getDocs(collection(db, "Cards"));
+        // this.cards = querySnapshot.docs.map((doc) => ({
+        //   id: doc.id,
+        //   ...doc.data(),
+        // }));
 
         const docSnap = await getDoc(docRef);
 

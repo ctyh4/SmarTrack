@@ -10,7 +10,7 @@
                 Add Card
                 <img id = "add-card-icon" src = "./../assets/add_card_button.png">
               </button>
-              <AddCardForm id="add-card-form" :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" @close-form="showAddCardForm = false" />
+              <AddCardForm :isVisible="showAddCardForm" :userEmail="user.email" @confirmed="addCard" @close-form="showAddCardForm = false" />
               
               <button id="liked-card-btn" type="button" @click="route">
                 Liked Cards
@@ -64,7 +64,6 @@
       onAuthStateChanged (auth, (user) => {  
         if (user) {
           this.user = user;
-          this.fetchCards(user);
         }
       })
     },
@@ -118,16 +117,10 @@
       },
       handleSearch(searchTerm) {
         this.$refs.cardGrid.updateSearch(searchTerm);
-        // this.filteredCards = this.cards.filter(card =>
-        //   card.name.toLowerCase().includes(searchTerm.toLowerCase())
-        // );
       },
       handleFilterUpdate({ minCashback, maxAnnualFee }) {
         console.log("handling filter update");
         this.$refs.cardGrid.updateFilter({ minCashback, maxAnnualFee });
-        // this.filteredCards = this.cards.filter(card =>
-        //   card.cashback >= minCashback && card.annualFee <= maxAnnualFee
-        // );
       },
     },
   }

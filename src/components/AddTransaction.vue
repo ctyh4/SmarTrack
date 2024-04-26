@@ -25,7 +25,7 @@ export default {
   justify-content: center;
   position: absolute;
   border: transparent;
-  top: 15px;
+  top: 25px;
   right: 150px;
   background-color: #7f56d9;
   color: white;

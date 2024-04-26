@@ -1,7 +1,7 @@
 <template>
   <Sidebar />
   <HomeButton />
-  <div id="filter">
+  <div id="filter" v-if="user">
     <FilterCard @update-filter="handleFilterUpdate" />
   </div>
 
@@ -20,7 +20,6 @@ import SearchBar from "@/components//SearchBar.vue";
 import FilterCard from "@/components/FilterCard.vue";
 import firebaseApp from "../firebase.js";
 import { getFirestore } from "firebase/firestore";
-import Logout from "@/components/Logout.vue";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
@@ -30,7 +29,6 @@ export default {
     FilterCard,
     SearchBar,
     CardGrid,
-    Logout,
     Sidebar,
     HomeButton,
   },

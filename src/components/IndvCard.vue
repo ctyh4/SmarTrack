@@ -1,36 +1,40 @@
 <template>
-  <div class="indvcard">
-      <div class="cardtitle">
-        <h1 id="title">
-          <img id="cardphoto" :src="imageUrl" /> {{ this.cardId }}
-        </h1>
-      </div>
+  <div class="indvcard" v-if="user">
+    <div class="cardtitle">
+      <h1 id="title">
+        <img id="cardphoto" :src="imageUrl" /> {{ this.cardId }}
+      </h1>
+    </div>
 
-      <div class="card-desc">
-        <h3>Description: </h3>
-        <p>{{ description }}</p><hr>
-      </div>
+    <div class="card-desc">
+      <h3>Description:</h3>
+      <p>{{ description }}</p>
+      <hr />
+    </div>
 
-      <div class="card-type">
-        <h3>Type: </h3>
-        <p>{{ type }}</p><hr>
-      </div>
-        
-      <div class="card-details" v-for="(value, newKey) in data" :key="newKey"> 
-        <h3>{{ newKey }}:</h3>
-        <p>{{ value }}</p><hr>
-      </div>        
+    <div class="card-type">
+      <h3>Type:</h3>
+      <p>{{ type }}</p>
+      <hr />
+    </div>
+
+    <div class="card-details" v-for="(value, newKey) in data" :key="newKey">
+      <h3>{{ newKey }}:</h3>
+      <p>{{ value }}</p>
+      <hr />
+    </div>
   </div>
 
-    <div class="bottom-button-container">
-      <button id="likebutton" @click="likeCard()">
-        <img
-          id="icon"
-          src="./../assets/heart_icon.png"
-          style="width: 20px; height: 15px"
-        />Like</button><br /><br />
-      <button id="addbutton" @click="addCard()">Add Card</button><br /><br />
-    </div>
+  <div class="bottom-button-container">
+    <button id="likebutton" @click="likeCard()">
+      <img
+        id="icon"
+        src="./../assets/heart_icon.png"
+        style="width: 20px; height: 15px"
+      />Like</button
+    ><br /><br />
+    <button id="addbutton" @click="addCard()">Add Card</button><br /><br />
+  </div>
 </template>
 
 <script>
@@ -63,12 +67,11 @@ export default {
     };
   },
   mounted() {
-    // Set the details when the component is created
-    this.fetchCardDetails(this.cardId);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.user = user;
+        this.fetchCards(user);
       }
     });
   },
@@ -160,7 +163,7 @@ export default {
         await updateDoc(userDocRef, {
           Inventory: arrayUnion(this.cardId),
         });
-        
+
         //Checking if the card has a minspend. If so, add it to a dictionary, organized by month and year
         const cardDocRef = doc(db, "Cards", this.cardId);
         const cardDocSnap = await getDoc(cardDocRef);
@@ -175,29 +178,27 @@ export default {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth() + 1; // Month starts from 0, so add 1
 
-        let newDictMS = userDocSnap.data().CardsWithMinSpend //Get the current dict in user
+        let newDictMS = userDocSnap.data().CardsWithMinSpend; //Get the current dict in user
         if (cardType == "CC" && minSpend == true) {
           newDictMS[this.cardId] = {
-              [`${year}-${month}`]: { 'Target': target, 'Current': 0 } //Update the dict to include the new card, sorted by year and month
+            [`${year}-${month}`]: { Target: target, Current: 0 }, //Update the dict to include the new card, sorted by year and month
           };
-        
 
           await updateDoc(userDocRef, {
-              CardsWithMinSpend: newDictMS
+            CardsWithMinSpend: newDictMS,
           });
-      }
+        }
 
-      let newDictCB = userDocSnap.data().CardsWithCBCap //Get the current dict in user for cards with cb cap
+        let newDictCB = userDocSnap.data().CardsWithCBCap; //Get the current dict in user for cards with cb cap
         if (cardType == "CC" && cbCap == true) {
           newDictCB[this.cardId] = {
-              [`${year}-${month}`]: { 'Limit': cbLimit, 'Current': 0 } //Update the dict to include the new card, sorted by year and month
+            [`${year}-${month}`]: { Limit: cbLimit, Current: 0 }, //Update the dict to include the new card, sorted by year and month
           };
-        
 
           await updateDoc(userDocRef, {
-              CardsWithCBCap: newDictCB
+            CardsWithCBCap: newDictCB,
           });
-      }
+        }
 
         // Log success or perform any other actions
         console.log("Card added successfully!");
@@ -214,7 +215,7 @@ export default {
         RebatePercent: "Rebate %",
         CashbackLimit: "Cash Back Limit",
         MinSpend: "Minimum Spend",
-        annualFee: "Annual Fee"
+        annualFee: "Annual Fee",
       };
 
       // Map keys in all dictionaries
@@ -226,7 +227,7 @@ export default {
         }
       }
       this.data = mappedData;
-    }
+    },
   },
 };
 </script>

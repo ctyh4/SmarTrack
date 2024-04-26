@@ -1,9 +1,34 @@
 <template>
-    <div>
-        <button id="backButton" type="button" @click="this.$router.go(-1)">
-            <img id = "icon" src = "./../assets/back_icon.png" style="width: 20px; height: 20px;">Back</button>
-    </div>
+  <div v-if="user">
+    <button id="backButton" type="button" @click="this.$router.go(-1)">
+      <img
+        id="icon"
+        src="./../assets/back_icon.png"
+        style="width: 20px; height: 20px"
+      />Back
+    </button>
+  </div>
 </template>
+
+<script>
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+export default {
+  data() {
+    return {
+      user: false,
+    };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.user = user;
+      }
+    });
+  },
+};
+</script>
 
 <style scoped>
 #backButton {
@@ -25,7 +50,7 @@
 }
 
 button:hover {
-    background-color: transparent;
-    opacity: 0.7;
+  background-color: transparent;
+  opacity: 0.7;
 }
 </style>
